@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Capriccio - Cocina</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+<body>
+    <!-- Sidebar (Igual que el index) -->
+    <div class="sidebar d-flex flex-column p-3">
+        <h3 class="text-center mb-4 text-danger">C</h3>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li><a href="index.html" class="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
+            <li><a href="cocina.html" class="nav-link active"><i class="bi bi-egg-fried me-2"></i> Cocina</a></li>
+            <li><a href="#" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reporte de Mermas</a></li>
+        </ul>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="main-content">
+        <h5 class="text-muted">Cocina - Almacén Interino (Insumos sin Procesar)</h5>
+        
+        <!-- Botones Grandes de Acción -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-6">
+                <div class="card p-4 shadow-sm border-0 bg-white h-100 d-flex flex-row align-items-center">
+                    <div class="me-3">
+                        <h2>Pedir Insumos a Almacén Central</h2>
+                        <p class="text-muted">Solicitar reposición de materia prima</p>
+                    </div>
+                    <img src="https://cdn-icons-png.flaticon.com/512/3737/3737372.png" width="100" alt="carrito">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card p-4 shadow-sm border-0 bg-white h-100 d-flex flex-row align-items-center">
+                    <div class="me-3">
+                        <h2>Enviar Productos Terminados a Tienda</h2>
+                        <p class="text-muted">Registrar y enviar producción a vitrina</p>
+                    </div>
+                    <img src="https://cdn-icons-png.flaticon.com/512/3081/3081918.png" width="100" alt="chef">
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Inventario de Cocina -->
+        <div class="card shadow-sm border-0 p-4">
+            <h5 class="mb-4">Inventario de Insumos sin Procesar</h5>
+            <table class="table align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Insumo</th>
+                        <th>Categoría</th>
+                        <th>Cantidad Actual</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-cocina">
+                    <!-- Datos dinámicos -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function cargarInventarioCocina() {
+            try {
+                const res = await fetch('http://localhost:8080/api/insumos');
+                const insumos = await res.json();
+                const tabla = document.getElementById('tabla-cocina');
+                
+                tabla.innerHTML = insumos.map(i => {
+                    // Lógica para el color de la barra de estado
+                    let colorStatus = i.stockTotalActual > i.stockMinimoAlerta ? 'text-success' : 'text-danger';
+                    let labelStatus = i.stockTotalActual > i.stockMinimoAlerta ? 'Verde | Óptimo' : 'Naranja | Stock Bajo';
+                    
+                    return `
+                    <tr>
+                        <td><strong>${i.nombreInsumo}</strong></td>
+                        <td>Abarrotes</td> <!-- Podrías agregar este campo a tu BD luego -->
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="me-2">${i.stockTotalActual} ${i.unidadMedida}</span>
+                                <div class="progress w-50" style="height: 8px;">
+                                    <div class="progress-bar bg-success" style="width: 70%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="${colorStatus}">${labelStatus}</span></td>
+                    </tr>`;
+                }).join('');
+            } catch (e) { console.error(e); }
+        }
+        window.onload = cargarInventarioCocina;
+    </script>
+</body>
+</html>
