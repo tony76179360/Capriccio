@@ -15,4 +15,11 @@ public class ViewController {
     public String cocina() {
         return "cocina.html";
     }
+
+    @GetMapping("/tienda")
+    public String mostrarTienda() {
+    return "tienda"; 
+    }
+
+    
 }
