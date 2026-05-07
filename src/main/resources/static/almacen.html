@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capriccio - Almacén</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+<body>
+
+<!-- Sidebar Lateral -->
+    <div class="sidebar d-flex flex-column p-3">
+        <h3 class="text-center mb-4"><span class="text-danger">C</span>apriccio</h3>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="index.html" class="nav-link active"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+            </li>
+            <li><a href="almacen.html" class="nav-link"><i class="bi bi-box-seam me-2"></i> Almacén </a></li>
+            <li><a href="cocina.html" class="nav-link"><i class="bi bi-egg-fried me-2"></i> Cocina</a></li>
+            <li><a href="#" class="nav-link"><i class="bi bi-shop me-2"></i> Tienda</a></li>
+            <li><a href="#" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reporte de Mermas</a></li>
+        </ul>
+        <hr>
+        <div class="dropdown">
+            <small>Grupo 3 - Ing. Sistemas</small>
+        </div>
+    </div>
+
+    <div class="main-content">
+        
+        <nav class="navbar navbar-expand-lg navbar-light bg-white rounded shadow-sm mb-4 px-3">
+            <div class="container-fluid">
+                <h5 class="m-0 fw-bold">Control de Almacén e Insumos</h5>
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-bell fs-4 me-3"></i>
+                    <span class="badge bg-primary rounded-pill">OR</span>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid">
+            
+            <div class="card shadow-sm border-0 mb-5">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold m-0"><i class="bi bi-list-check me-2"></i> Stock Detallado de Pastelería</h5>
+                        <input type="text" class="form-control w-25" placeholder="Filtrar insumo...">
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light text-secondary text-uppercase small fw-bold">
+                                <tr>
+                                    <th>Insumo</th>
+                                    <th>Categoría</th>
+                                    <th>Stock Actual</th>
+                                    <th>U. Medida</th>
+                                    <th>Estado</th>
+                                    <th>Último Ingreso</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="fw-bold">Harina Preparada</td>
+                                    <td>Secos</td>
+                                    <td>250.00</td>
+                                    <td>Kg</td>
+                                    <td><span class="badge bg-success-subtle text-success border border-success">Suficiente</span></td>
+                                    <td>05/05/2026</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Mantequilla sin Sal</td>
+                                    <td>Lácteos</td>
+                                    <td>15.50</td>
+                                    <td>Kg</td>
+                                    <td><span class="badge bg-warning-subtle text-warning border border-warning">Bajo</span></td>
+                                    <td>02/05/2026</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Azúcar Blanca</td>
+                                    <td>Secos</td>
+                                    <td>100.00</td>
+                                    <td>Kg</td>
+                                    <td><span class="badge bg-success-subtle text-success border border-success">Suficiente</span></td>
+                                    <td>04/05/2026</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Esencia de Vainilla</td>
+                                    <td>Líquidos</td>
+                                    <td>2.00</td>
+                                    <td>Lt</td>
+                                    <td><span class="badge bg-danger-subtle text-danger border border-danger">Crítico</span></td>
+                                    <td>20/04/2026</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Huevos de Granja</td>
+                                    <td>Abarrotes</td>
+                                    <td>450</td>
+                                    <td>Unid</td>
+                                    <td><span class="badge bg-success-subtle text-success border border-success">Suficiente</span></td>
+                                    <td>06/05/2026</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-5">
+                    <div class="card card-option shadow-sm h-100">
+                        <div class="img-container">
+                            <img src="https://images.unsplash.com/photo-1534723452862-4c874018d66d?q=80&w=800" alt="Nueva Compra">
+                        </div>
+                        <div class="card-body text-center p-4">
+                            <div class="icon-box bg-danger-subtle text-danger mx-auto">
+                                <i class="bi bi-cart-plus-fill fs-2"></i>
+                            </div>
+                            <h4 class="fw-bold">Nueva Compra</h4>
+                            <p class="text-muted mb-4">Registro de facturas e ingreso de insumos al inventario.</p>
+                            <a href="compras_form.html" class="btn btn-danger w-100 py-2">Registrar Compra</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-5">
+                    <div class="card card-option shadow-sm h-100">
+                        <div class="img-container">
+                            <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=800" alt="Pedidos Cocina">
+                        </div>
+                        <div class="card-body text-center p-4">
+                            <div class="icon-box bg-primary-subtle text-primary mx-auto">
+                                <i class="bi bi-clipboard-check-fill fs-2"></i>
+                            </div>
+                            <h4 class="fw-bold">Pedidos de Cocina</h4>
+                            <p class="text-muted mb-4">Visualización y despacho de requerimientos para producción.</p>
+                            <a href="pedidos_cocina.html" class="btn btn-primary w-100 py-2">Ver Solicitudes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
