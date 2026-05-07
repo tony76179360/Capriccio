@@ -6,18 +6,41 @@
     <title>Capriccio - Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <!-- Iconos de Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
+    <style>
+        body { background-color: #f8f9fa; font-family: sans-serif; }
+        
+       
 
+        /* EFECTOS VISUALES DEL DASHBOARD */
+        .card-kpi { transition: all 0.3s ease; border: none; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        .card-kpi:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
+        .search-bar { border-radius: 20px; background-color: #f8f9fa; border: 1px solid #dee2e6; }
+        
+        /* Animación de pulso para la alerta */
+        .pulse-button { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(220, 53, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+        }
 
-
+        /* Estilos del Feed de Actividad */
+        .activity-feed { border-left: 2px solid #e9ecef; padding-left: 20px; margin-left: 10px; margin-top: 10px; }
+        .activity-item { position: relative; margin-bottom: 1.5rem; }
+        .activity-item::before {
+            content: ''; position: absolute; left: -26px; top: 0; width: 10px; height: 10px;
+            border-radius: 50%; background: #0d6efd; border: 2px solid #fff;
+        }
+        .activity-item.danger::before { background: #dc3545; }
+        .activity-item.warning::before { background: #ffc107; }
+        .activity-item.success::before { background: #198754; }
+    </style>
 </head>
 
 <body>
-
-    <!-- Sidebar Lateral -->
-    <div class="sidebar d-flex flex-column p-3">
+     <div class="sidebar d-flex flex-column p-3">
         <h3 class="text-center mb-4"><span class="text-danger">C</span>apriccio</h3>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
@@ -34,109 +57,192 @@
         </div>
     </div>
 
-    
-
-    <!-- Contenido Principal -->
     <div class="main-content">
-        <nav class="navbar navbar-expand-lg navbar-light bg-white rounded shadow-sm mb-4">
-            <div class="container-fluid">
-                <input class="form-control w-50" type="search" placeholder="Buscar insumo u orden...">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-bell fs-4 me-3"></i>
-                    <span class="badge bg-primary rounded-pill">OR</span>
-                </div>
+        <nav class="navbar navbar-expand-lg bg-white rounded shadow-sm mb-4 p-3 d-flex justify-content-between">
+            <input class="form-control search-bar w-50" type="search" placeholder="Buscar insumo u orden...">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-bell fs-4 me-3 text-muted"></i>
+                <button class="btn btn-primary btn-sm rounded-pill px-3">
+                    <i class="bi bi-person-circle me-1"></i> Admin: Antony
+                </button>
             </div>
         </nav>
 
-        <h4 class="mb-4">Dashboard - Inicio</h4>
+        <h4 class="mb-4 text-dark fw-bold">Dashboard - Inicio</h4>
 
-        <!-- Tarjetas de Resumen -->
-        <div class="row mb-4">
+        <div class="row mb-4 g-3">
             <div class="col-md-3">
-                <div class="card stat-card p-3">
+                <div class="card card-kpi p-3 h-100">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <p class="text-muted mb-0">Total Insumos</p>
-                            <h3>156</h3>
-                            <small class="text-success">↑ 12% este mes</small>
+                            <p class="text-muted mb-0 small fw-bold">Total Insumos</p>
+                            <h3 class="fw-bold text-dark" id="kpi-insumos">...</h3>
+                            <small class="text-success"><i class="bi bi-arrow-up-short"></i> Registrados</small>
                         </div>
-                        <div class="bg-light-success p-2 rounded text-success"><i class="bi bi-box"></i></div>
+                        <div class="bg-light p-3 rounded-circle text-primary"><i class="bi bi-box-seam fs-4"></i></div>
                     </div>
                 </div>
             </div>
-            <!-- Repite para Mermas del día y Alertas -->
+            
             <div class="col-md-3">
-                <div class="card stat-card p-3">
-                    <p class="text-muted mb-0">Mermas del día</p>
-                    <h3>$350</h3>
-                    <small class="text-danger">↓ 5% vs ayer</small>
+                <div class="card card-kpi p-3 h-100">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-0 small fw-bold">Pérdidas (Mermas)</p>
+                            <h3 class="fw-bold text-danger" id="kpi-mermas">S/ 0.00</h3>
+                            <small class="text-danger"><i class="bi bi-exclamation-circle"></i> Impacto Total</small>
+                        </div>
+                        <div class="bg-danger bg-opacity-10 p-3 rounded-circle text-danger"><i class="bi bi-graph-down-arrow fs-4"></i></div>
+                    </div>
                 </div>
             </div>
+            
             <div class="col-md-3">
-                <div class="card stat-card p-3">
-                    <p class="text-muted mb-0">Productos en Proceso</p>
-                    <h3>48</h3>
-                    <small class="text-success">↑ 8 hoy</small>
+                <div class="card card-kpi p-3 h-100">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-0 small fw-bold">Tortas en Proceso</p>
+                            <h3 class="fw-bold text-warning" id="kpi-proceso">...</h3>
+                            <small class="text-secondary"><i class="bi bi-clock-history"></i> En Cocina</small>
+                        </div>
+                        <div class="bg-warning bg-opacity-10 p-3 rounded-circle text-warning"><i class="bi bi-arrow-repeat fs-4"></i></div>
+                    </div>
                 </div>
             </div>
+            
             <div class="col-md-3">
-                <div class="card stat-card border-danger p-3">
-                    <p class="text-muted mb-0">Alertas de Stock</p>
-                    <h3 class="text-danger">4</h3>
-                    <span class="badge bg-danger">Requiere atención</span>
+                <div class="card card-kpi p-3 border-start border-danger border-4 h-100 bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <p class="text-muted mb-0 small fw-bold">Alertas de Stock</p>
+                            <h2 class="text-danger fw-bold mb-0" id="kpi-alertas">...</h2>
+                        </div>
+                        <div class="text-danger"><i class="bi bi-bell-fill fs-3"></i></div>
+                    </div>
+                    <span class="badge bg-danger pulse-button w-100 py-2">Requiere atención</span>
                 </div>
             </div>
         </div>
 
-        <!-- Tabla de Alertas de Stock Bajo -->
-        <div class="card stat-card p-4">
-            <h5>Alertas de Stock Bajo</h5>
-            <table class="table align-middle mt-3">
-                <thead class="text-muted">
-                    <tr>
-                        <th>Producto</th>
-                        <th>Stock Actual</th>
-                        <th>Stock Mínimo</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody id="tabla-alertas">
-                    <!-- Los datos vendrán de tu Backend Java -->
-                </tbody>
-            </table>
+        <div class="row g-4">
+            <div class="col-md-8">
+                <div class="card card-kpi p-4 h-100">
+                    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-exclamation-triangle text-danger me-2"></i> Insumos con Stock Bajo</h5>
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead class="table-light text-muted small text-uppercase">
+                                <tr>
+                                    <th>Insumo</th>
+                                    <th>Stock Actual</th>
+                                    <th>Mínimo Permitido</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-alertas">
+                                <tr><td colspan="4" class="text-center text-muted">Cargando base de datos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card card-kpi p-4 h-100 bg-white">
+                    <h5 class="fw-bold text-dark mb-4"><i class="bi bi-activity text-primary me-2"></i> Actividad del Sistema</h5>
+                    <div class="activity-feed" id="actividad-reciente">
+                        <div class="text-center text-muted small py-4">Cargando registros...</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Aquí conectaremos con tu endpoint de Java para llenar la tabla
-        async function cargarAlertasStock() {
-    try {
-        const res = await fetch('/api/insumos');
-        const insumos = await res.json();
-        
-        // Filtramos solo los que están por debajo del stock mínimo
-        const criticos = insumos.filter(i => i.stockTotalActual <= i.stockMinimoAlerta);
-        
-        const tabla = document.querySelector('#tabla-alertas'); // Asegúrate que tu tbody tenga este ID
-        
-        if (criticos.length === 0) {
-            tabla.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-success fw-bold">✅ Todo el stock está en niveles óptimos</td></tr>';
-            return;
+        async function cargarDashboardData() {
+            try {
+                // 1. Solicitar datos simultáneos al Backend Java
+                const [resInsumos, resMermas, resOrdenes] = await Promise.all([
+                    fetch('/api/insumos'),
+                    fetch('/api/mermas'),
+                    fetch('/api/ordenes/pendientes')
+                ]);
+
+                const insumos = await resInsumos.json();
+                const mermas = await resMermas.json();
+                const ordenes = await resOrdenes.json();
+
+                // 2. ACTUALIZAR KPIs (Tarjetas Superiores)
+                
+                // Total Insumos
+                document.getElementById('kpi-insumos').innerText = insumos.length;
+
+                // Impacto de Mermas (Suma total de pérdidas)
+                const costoMermas = mermas.reduce((total, m) => total + (m.costofinancierocal || 0), 0);
+                document.getElementById('kpi-mermas').innerText = `S/ ${costoMermas.toFixed(2)}`;
+
+                // Tortas en Proceso (Suma de cantidad solicitada en cocina)
+                const totalProceso = ordenes.reduce((total, o) => total + (o.cantidadSolicitada || 0), 0);
+                document.getElementById('kpi-proceso').innerText = totalProceso;
+
+                // Alertas de Stock (Calcula los críticos)
+                const criticos = insumos.filter(i => parseFloat(i.stockTotalActual) <= parseFloat(i.stockMinimoAlerta));
+                document.getElementById('kpi-alertas').innerText = criticos.length;
+
+                // 3. ACTUALIZAR TABLA DE ALERTAS
+                const tabla = document.getElementById('tabla-alertas');
+                if (criticos.length === 0) {
+                    tabla.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-success fw-bold"><i class="bi bi-check-circle-fill me-2 fs-4 d-block mb-2"></i>Todo el stock de almacén está en niveles óptimos</td></tr>`;
+                } else {
+                    tabla.innerHTML = criticos.map(i => `
+                        <tr>
+                            <td class="fw-bold text-dark">${i.nombreInsumo}</td>
+                            <td><span class="badge bg-danger bg-opacity-10 text-danger border border-danger px-2 py-1">${i.stockTotalActual} ${i.unidadMedida}</span></td>
+                            <td class="text-muted">${i.stockMinimoAlerta} ${i.unidadMedida}</td>
+                            <td><span class="badge bg-danger pulse-button">Reponer</span></td>
+                        </tr>
+                    `).join('');
+                }
+
+                // 4. GENERAR FEED DE ACTIVIDAD DINÁMICO
+                const feed = document.getElementById('actividad-reciente');
+                let htmlFeed = '';
+
+                // Última orden detectada
+                if(ordenes.length > 0) {
+                    const ultOrden = ordenes[ordenes.length - 1]; // Toma la última
+                    htmlFeed += `
+                        <div class="activity-item warning">
+                            <p class="mb-0 fw-bold small text-dark">Tienda solicitó producción</p>
+                            <p class="text-muted mb-0" style="font-size: 12px;">El administrador Antony ordenó preparar ${ultOrden.cantidadSolicitada} unid. de ${ultOrden.nombreProducto}.</p>
+                        </div>
+                    `;
+                }
+
+                // Última merma detectada
+                if(mermas.length > 0) {
+                    const ultMerma = mermas[mermas.length - 1];
+                    htmlFeed += `
+                        <div class="activity-item danger">
+                            <p class="mb-0 fw-bold small text-danger">Alerta de Merma Registrada</p>
+                            <p class="text-muted mb-0" style="font-size: 12px;">Pérdida de S/ ${ultMerma.costofinancierocal.toFixed(2)} reportada en cocina (Causa: ${ultMerma.tipoclasi}).</p>
+                        </div>
+                    `;
+                }
+
+                // Si no hay datos, mostrar mensaje
+                if(htmlFeed === '') {
+                    htmlFeed = `<p class="text-muted small">No hay eventos recientes en el sistema.</p>`;
+                }
+
+                feed.innerHTML = htmlFeed;
+
+            } catch (error) {
+                console.error("Error al cargar datos del Dashboard:", error);
+            }
         }
 
-        tabla.innerHTML = criticos.map(i => `
-            <tr>
-                <td class="fw-bold">${i.nombreInsumo}</td>
-                <td><span class="badge bg-light text-dark border">${i.stockTotalActual} ${i.unidadMedida}</span></td>
-                <td>${i.stockMinimoAlerta} ${i.unidadMedida}</td>
-                <td><span class="badge bg-danger">Crítico - Reponer</span></td>
-            </tr>
-        `).join('');
-    } catch (e) {
-        console.error("Error cargando alertas", e);
-    }
-}
-        window.onload = cargarAlertas;
+        // Cargar los datos automáticamente al abrir la página
+        window.onload = cargarDashboardData;
     </script>
 </body>
 </html>
