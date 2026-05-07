@@ -18,7 +18,7 @@
             <li><a href="almacen.html" class="nav-link"><i class="bi bi-box-seam me-2"></i> Almacén </a></li>
             <li><a href="cocina.html" class="nav-link"><i class="bi bi-egg-fried me-2"></i> Cocina</a></li>
             <li><a href="tienda.html" class="nav-link"><i class="bi bi-shop me-2"></i> Tienda</a></li>
-            <li><a href="#" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reporte de Mermas</a></li>
+            <li><a href="reporte_mermas.html" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reporte de Mermas</a></li>
         </ul>
         <hr>
         <div class="dropdown">
@@ -208,36 +208,37 @@
             } catch (e) { console.error("Error en select:", e); }
         }
 
-        // 3. Función para enviar el formulario al Backend Java
+        // 3. Función para guardar la merma
         document.getElementById('formMerma').addEventListener('submit', async (e) => {
-        e.preventDefault();
+            e.preventDefault();
 
-        const datosMerma = {
-            insumo: { idInsumo: document.getElementById('selectInsumo').value },
-            cantidadPerdida: document.getElementById('cantidadMerma').value,
-            tipoClasificacion: document.getElementById('causaMerma').value,
-            idUsuario: document.getElementById('idUsuario').value,
-            idOrden: document.getElementById('idOrden').value || null // Si está vacío, manda null
-        };
+            // Usamos los nombres exactos de las variables en RegistroMerma.java
+            const datosMerma = {
+                insumo: { idInsumo: parseInt(document.getElementById('selectInsumo').value) },
+                cantidadperdida: parseFloat(document.getElementById('cantidadMerma').value),
+                tipoclasi: document.getElementById('causaMerma').value,
+                idusuario: parseInt(document.getElementById('idUsuario').value),
+                idorden: document.getElementById('idOrden').value ? parseInt(document.getElementById('idOrden').value) : null
+            };
 
-        try {
-            const respuesta = await fetch('/api/mermas', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(datosMerma)
-            });
+            try {
+                const respuesta = await fetch('/api/mermas', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datosMerma)
+                });
 
-            if (respuesta.ok) {
-                const resultado = await respuesta.json();
-                alert(`¡Éxito! Merma registrada.\nValor calculado: S/ ${resultado.costoFinancieroCalculado}`);
-                location.reload();
-            } else {
-                alert("Error al registrar la merma.");
+                if (respuesta.ok) {
+                    const resultado = await respuesta.json();
+                    alert(`¡Éxito! Merma registrada en la base de datos.\nValor calculado: S/ ${resultado.costofinancierocal.toFixed(2)}`);
+                    location.reload(); 
+                } else {
+                    alert("Error al registrar la merma en la base de datos.");
+                }
+            } catch (error) { 
+                console.error("Error:", error); 
             }
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    });
+        });
         //
     // --- 1. CARGAR ÓRDENES PENDIENTES ---
         async function cargarOrdenesPendientes() {
