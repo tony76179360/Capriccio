@@ -6,12 +6,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Data;
+
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "insumos")
-@Data
+
 public class Insumo {
     
     @Id
@@ -33,4 +33,57 @@ public class Insumo {
 
     @Column(name = "stock_minimo_alerta", precision = 10, scale = 2)
     private BigDecimal stockMinimoAlerta;
+
+    public Integer getIdInsumo() {
+        return idInsumo;
+    }
+
+    public void setIdInsumo(Integer idInsumo) {
+        this.idInsumo = idInsumo;
+    }
+
+    public String getNombreInsumo() {
+        return nombreInsumo;
+    }
+
+    public void setNombreInsumo(String nombreInsumo) {
+        this.nombreInsumo = nombreInsumo;
+    }
+
+    public String getUnidadMedida() {
+        return unidadMedida;
+    }
+
+    public void setUnidadMedida(String unidadMedida) {
+        this.unidadMedida = unidadMedida;
+    }
+
+    public BigDecimal getCostoUnitario() {
+        return costoUnitario;
+    }
+
+    public void setCostoUnitario(BigDecimal costoUnitario) {
+        this.costoUnitario = costoUnitario;
+    }
+
+    public BigDecimal getStockTotalActual() {
+        return stockTotalActual;
+    }
+
+    public void setStockTotalActual(BigDecimal stockTotalActual) {
+        this.stockTotalActual = stockTotalActual;
+    }
+
+    public BigDecimal getStockMinimoAlerta() {
+        return stockMinimoAlerta;
+    }
+
+    public void setStockMinimoAlerta(BigDecimal stockMinimoAlerta) {
+        this.stockMinimoAlerta = stockMinimoAlerta;
+    }
+
+    
+    
+    
+
 }
