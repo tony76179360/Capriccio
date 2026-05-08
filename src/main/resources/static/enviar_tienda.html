@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capriccio - Enviar a Tienda</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+
+<body>
+
+    <div class="sidebar d-flex flex-column p-3">
+        <h3 class="text-center mb-4"><span class="text-danger">C</span>apriccio</h3>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="index.html" class="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+            </li>
+            <li><a href="almacen.html" class="nav-link"><i class="bi bi-box-seam me-2"></i> Almacén </a></li>
+            <li><a href="cocina.html" class="nav-link active"><i class="bi bi-egg-fried me-2"></i> Cocina</a></li>
+            <li><a href="tienda.html" class="nav-link"><i class="bi bi-shop me-2"></i> Tienda</a></li>
+            <li><a href="reporte_mermas.html" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reporte de
+                    Mermas</a></li>
+        </ul>
+        <hr>
+        <div class="dropdown">
+            <small>Grupo 3 - Ing. Sistemas</small>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white rounded shadow-sm mb-4 px-3">
+            <div class="container-fluid">
+                <h5 class="m-0 fw-bold">Despacho de Productos Terminados</h5>
+                <a href="cocina.html" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Volver a
+                    Cocina</a>
+            </div>
+        </nav>
+
+        <div class="container-fluid">
+            <div class="row g-4">
+
+                <div class="col-md-5">
+                    <div class="card shadow-sm border-0 p-4">
+                        <h6 class="fw-bold mb-4 text-success text-uppercase">Registrar Salida a Vitrina</h6>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Seleccionar Producto Terminado</label>
+                            <select class="form-select">
+                                <option selected disabled>Elija la torta...</option>
+                                <option>Torta Selva Negra</option>
+                                <option>Torta Helada Especial</option>
+                                <option>Torta Tres Leches</option>
+                                <option>Cheesecake de Fresa</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Cantidad a Enviar</label>
+                            <input type="number" class="form-control" placeholder="Cantidad de unidades" min="0"
+                                oninput="if(this.value < 0) this.value = 0;" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Sucursal de Destino</label>
+                            <select class="form-select">
+                                <option selected disabled>Seleccione sucursal...</option>
+                                <option>Sucursal Calle Mercaderes (Centro)</option>
+                                <option>Sucursal Av. Ejército (Cayma)</option>
+                                <option>Sucursal Mall Arequipa Center (Cerro Colorado)</option>
+                                <option>Sucursal Lambramani</option>
+                                <option>Sucursal Real Plaza</option>
+                            </select>
+                        </div>
+
+                        <button class="btn btn-success w-100 py-2 fw-bold"
+                            style="background-color: #28a745; border:none;">
+                            <i class="bi bi-truck me-2"></i> Confirmar Envío a Tienda
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white py-3 border-0">
+                            <h6 class="m-0 fw-bold text-muted"><i class="bi bi-clock-history me-2"></i> Últimos
+                                Despachos del Día</h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-hover mb-0 align-middle">
+                                <thead class="table-light small text-uppercase">
+                                    <tr>
+                                        <th class="ps-4">Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Destino</th>
+                                        <th class="text-end pe-4">Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="ps-4 fw-bold">Torta Selva Negra</td>
+                                        <td><span class="badge bg-light text-dark border">3 Unid.</span></td>
+                                        <td>Calle Mercaderes</td>
+                                        <td class="text-end pe-4">
+                                            <span class="badge bg-info-subtle text-info">En Camino</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="ps-4 fw-bold">Torta Helada</td>
+                                        <td><span class="badge bg-light text-dark border">2 Unid.</span></td>
+                                        <td>Av. Ejército</td>
+                                        <td class="text-end pe-4">
+                                            <span class="badge bg-success-subtle text-success">Entregado</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
