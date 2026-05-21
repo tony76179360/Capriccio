@@ -47,77 +47,113 @@ private Boolean requiereauditoria = false;
 @Column(name = "fecha_registro", updatable = false)
 private LocalDateTime fecharegistro= LocalDateTime.now();
 
-public Integer getIdmerma() {
-    return idmerma;
-}
+@Column(name = "es_reutilizable")
+    private Boolean esReutilizable = false;
 
-public void setIdmerma(Integer idmerma) {
-    this.idmerma = idmerma;
-}
+    @Column(name = "desviacion_porcentaje", precision = 10, scale = 2)
+    private BigDecimal desviacionPorcentaje;
 
-public Integer getIdorden() {
-    return idorden;
-}
+    @Column(name = "estado_auditoria")
+    private String estadoAuditoria = "Aceptado";
 
-public void setIdorden(Integer idorden) {
-    this.idorden = idorden;
-}
+    public Integer getIdmerma() {
+        return idmerma;
+    }
 
-public Insumo getInsumo() {
-    return insumo;
-}
+    public void setIdmerma(Integer idmerma) {
+        this.idmerma = idmerma;
+    }
 
-public void setInsumo(Insumo insumo) {
-    this.insumo = insumo;
-}
+    public Integer getIdorden() {
+        return idorden;
+    }
 
-public Integer getIdusuario() {
-    return idusuario;
-}
+    public void setIdorden(Integer idorden) {
+        this.idorden = idorden;
+    }
 
-public void setIdusuario(Integer idusuario) {
-    this.idusuario = idusuario;
-}
+    public Insumo getInsumo() {
+        return insumo;
+    }
 
-public String getTipoclasi() {
-    return tipoclasi;
-}
+    public void setInsumo(Insumo insumo) {
+        this.insumo = insumo;
+    }
 
-public void setTipoclasi(String tipoclasi) {
-    this.tipoclasi = tipoclasi;
-}
+    public Integer getIdusuario() {
+        return idusuario;
+    }
 
-public BigDecimal getCantidadperdida() {
-    return cantidadperdida;
-}
+    public void setIdusuario(Integer idusuario) {
+        this.idusuario = idusuario;
+    }
 
-public void setCantidadperdida(BigDecimal cantidadperdida) {
-    this.cantidadperdida = cantidadperdida;
-}
+    public String getTipoclasi() {
+        return tipoclasi;
+    }
 
-public BigDecimal getCostofinancierocal() {
-    return costofinancierocal;
-}
+    public void setTipoclasi(String tipoclasi) {
+        this.tipoclasi = tipoclasi;
+    }
 
-public void setCostofinancierocal(BigDecimal costofinancierocal) {
-    this.costofinancierocal = costofinancierocal;
-}
+    public BigDecimal getCantidadperdida() {
+        return cantidadperdida;
+    }
 
-public Boolean getRequiereauditoria() {
-    return requiereauditoria;
-}
+    public void setCantidadperdida(BigDecimal cantidadperdida) {
+        this.cantidadperdida = cantidadperdida;
+    }
 
-public void setRequiereauditoria(Boolean requiereauditoria) {
-    this.requiereauditoria = requiereauditoria;
-}
+    public BigDecimal getCostofinancierocal() {
+        return costofinancierocal;
+    }
 
-public LocalDateTime getFecharegistro() {
-    return fecharegistro;
-}
+    public void setCostofinancierocal(BigDecimal costofinancierocal) {
+        this.costofinancierocal = costofinancierocal;
+    }
 
-public void setFecharegistro(LocalDateTime fecharegistro) {
-    this.fecharegistro = fecharegistro;
-}
+    public Boolean getRequiereauditoria() {
+        return requiereauditoria;
+    }
+
+    public void setRequiereauditoria(Boolean requiereauditoria) {
+        this.requiereauditoria = requiereauditoria;
+    }
+
+    public LocalDateTime getFecharegistro() {
+        return fecharegistro;
+    }
+
+    public void setFecharegistro(LocalDateTime fecharegistro) {
+        this.fecharegistro = fecharegistro;
+    }
+
+    public Boolean getEsReutilizable() {
+        return esReutilizable;
+    }
+
+    public void setEsReutilizable(Boolean esReutilizable) {
+        this.esReutilizable = esReutilizable;
+    }
+
+    public BigDecimal getDesviacionPorcentaje() {
+        return desviacionPorcentaje;
+    }
+
+    public void setDesviacionPorcentaje(BigDecimal desviacionPorcentaje) {
+        this.desviacionPorcentaje = desviacionPorcentaje;
+    }
+
+    public String getEstadoAuditoria() {
+        return estadoAuditoria;
+    }
+
+    public void setEstadoAuditoria(String estadoAuditoria) {
+        this.estadoAuditoria = estadoAuditoria;
+    }
+
+
+
 
 
 

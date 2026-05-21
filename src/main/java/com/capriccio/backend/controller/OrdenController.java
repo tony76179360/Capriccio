@@ -23,4 +23,14 @@ public class OrdenController {
     public OrdenProduccion crearOrden(@RequestBody OrdenProduccion orden) {
         return ordenRepository.save(orden);
     }
+
+    @GetMapping("/en-proceso")
+    public List<OrdenProduccion> listarEnProceso() {
+        return ordenRepository.findByEstado("En Proceso");
+    }
+
+    @GetMapping("/completadas")
+    public List<OrdenProduccion> listarCompletadas() {
+        return ordenRepository.findByEstado("Completado");
+    }
 }

@@ -10,12 +10,13 @@
 </head>
 <body>
 
-<!-- Sidebar Lateral -->
     <div class="sidebar d-flex flex-column p-3">
         <h3 class="text-center mb-4"><span class="text-danger">C</span>apriccio</h3>
         <ul class="nav nav-pills flex-column mb-auto">
-           <li><a href="index.html"class="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
-            <li><a href="almacen.html" class="nav-link active" class="nav-link"><i class="bi bi-box-seam me-2"></i> Almacén </a></li>
+            <li class="nav-item">
+                <a href="index.html" class="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+            </li>
+            <li><a href="almacen.html" class="nav-link active"><i class="bi bi-box-seam me-2"></i> Almacén </a></li>
             <li><a href="cocina.html" class="nav-link"><i class="bi bi-egg-fried me-2"></i> Cocina</a></li>
             <li><a href="tienda.html" class="nav-link"><i class="bi bi-shop me-2"></i> Tienda</a></li>
             <li><a href="reporte_mermas.html" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reporte de Mermas</a></li>
@@ -33,7 +34,7 @@
                 <h5 class="m-0 fw-bold">Control de Almacén e Insumos</h5>
                 <div class="d-flex align-items-center">
                     <i class="bi bi-bell fs-4 me-3"></i>
-                    <span class="badge bg-primary rounded-pill">Oscar Ramos</span>
+                    <span class="badge bg-primary rounded-pill">OR</span>
                 </div>
             </div>
         </nav>
@@ -44,7 +45,7 @@
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="fw-bold m-0"><i class="bi bi-list-check me-2"></i> Stock Detallado de Pastelería</h5>
-                        <input type="text" class="form-control w-25" placeholder="Filtrar insumo...">
+                        <input type="text" id="buscarInsumo" class="form-control w-25" placeholder="Filtrar insumo...">
                     </div>
                     
                     <div class="table-responsive">
@@ -56,49 +57,11 @@
                                     <th>Stock Actual</th>
                                     <th>U. Medida</th>
                                     <th>Estado</th>
-                                    <th>Último Ingreso</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="tabla-almacen">
                                 <tr>
-                                    <td class="fw-bold">Harina Preparada</td>
-                                    <td>Secos</td>
-                                    <td>250.00</td>
-                                    <td>Kg</td>
-                                    <td><span class="badge bg-success-subtle text-success border border-success">Suficiente</span></td>
-                                    <td>05/05/2026</td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">Mantequilla sin Sal</td>
-                                    <td>Lácteos</td>
-                                    <td>15.50</td>
-                                    <td>Kg</td>
-                                    <td><span class="badge bg-warning-subtle text-warning border border-warning">Bajo</span></td>
-                                    <td>02/05/2026</td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">Azúcar Blanca</td>
-                                    <td>Secos</td>
-                                    <td>100.00</td>
-                                    <td>Kg</td>
-                                    <td><span class="badge bg-success-subtle text-success border border-success">Suficiente</span></td>
-                                    <td>04/05/2026</td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">Esencia de Vainilla</td>
-                                    <td>Líquidos</td>
-                                    <td>2.00</td>
-                                    <td>Lt</td>
-                                    <td><span class="badge bg-danger-subtle text-danger border border-danger">Crítico</span></td>
-                                    <td>20/04/2026</td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">Huevos de Granja</td>
-                                    <td>Abarrotes</td>
-                                    <td>450</td>
-                                    <td>Unid</td>
-                                    <td><span class="badge bg-success-subtle text-success border border-success">Suficiente</span></td>
-                                    <td>06/05/2026</td>
+                                    <td colspan="5" class="text-center text-muted">Conectando con el almacén central de datos...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -143,5 +106,71 @@
         </div>
     </div>
 
+    <script>
+        let listaInsumos = []; // Almacenará los datos locales para el buscador
+
+        async function cargarStockAlmacen() {
+            try {
+                // Petición HTTP GET al Backend de Spring Boot
+                const respuesta = await fetch('/api/insumos');
+                listaInsumos = await respuesta.json();
+                
+                renderizarTabla(listaInsumos);
+            } catch (error) {
+                console.error("Error al conectar con la API de insumos:", error);
+                document.getElementById('tabla-almacen').innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-danger fw-bold">
+                            ⚠️ Error de comunicación con el servidor. Verifica que tu Backend esté encendido.
+                        </td>
+                    </tr>`;
+            }
+        }
+
+        function renderizarTabla(datos) {
+            const tbody = document.getElementById('tabla-almacen');
+            
+            if(datos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No hay insumos registrados en la base de datos.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = datos.map(insumo => {
+                const stockActual = parseFloat(insumo.stockTotalActual);
+                const stockMinimo = parseFloat(insumo.stockMinimoAlerta);
+                
+                // Clasificación dinámica de alertas basada en tus estilos CSS
+                let badgeEstado = '';
+                if (stockActual <= stockMinimo) {
+                    badgeEstado = '<span class="badge bg-danger-subtle text-danger border border-danger">Crítico</span>';
+                } else if (stockActual <= stockMinimo * 1.5) {
+                    badgeEstado = '<span class="badge bg-warning-subtle text-warning border border-warning">Bajo</span>';
+                } else {
+                    badgeEstado = '<span class="badge bg-success-subtle text-success border border-success">Suficiente</span>';
+                }
+
+                return `
+                <tr>
+                    <td class="fw-bold">${insumo.nombreInsumo}</td>
+                    <td class="text-muted">Insumos Base</td>
+                    <td class="fs-5 fw-semibold">${stockActual.toFixed(2)}</td>
+                    <td>${insumo.unidadMedida}</td>
+                    <td>${badgeEstado}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        // Lógica de búsqueda interactiva (Filtrado del JSON sin recargar página)
+        document.getElementById('buscarInsumo').addEventListener('input', (e) => {
+            const textoBusqueda = e.target.value.toLowerCase();
+            const insumosFiltrados = listaInsumos.filter(i => 
+                i.nombreInsumo.toLowerCase().includes(textoBusqueda)
+            );
+            renderizarTabla(insumosFiltrados);
+        });
+
+        // Ejecutar carga automática al abrir la pantalla
+        window.onload = cargarStockAlmacen;
+    </script>
 </body>
 </html>

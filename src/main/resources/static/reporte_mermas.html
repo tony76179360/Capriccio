@@ -135,24 +135,28 @@
                 }
 
                 tabla.innerHTML = mermas.reverse().map(m => {
-                    const fecha = new Date(m.fecharegistro).toLocaleDateString('es-PE', {
-                        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                    });
+                    const fecha = new Date(m.fecharegistro).toLocaleDateString('es-PE', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-                    const badgeAuditoria = m.requiereauditoria 
-                        ? '<span class="badge bg-danger"><i class="bi bi-exclamation-triangle-fill me-1"></i> Requiere Revisión</span>'
-                        : '<span class="badge bg-success bg-opacity-10 text-success border border-success px-2">Aceptado</span>';
-                    
-                    const claseFila = m.requiereauditoria ? 'row-critica' : '';
+                    // Lógica visual del cierre de incidente
+                    let accionAuditoria = '';
+                    if (m.estadoAuditoria === 'Requiere Cierre') {
+                        accionAuditoria = `<button class="btn btn-sm btn-danger pulse-button w-100" onclick="cerrarIncidente(${m.idmerma})"><i class="bi bi-x-circle me-1"></i> Cerrar Incidente</button>`;
+                    } else if (m.estadoAuditoria === 'Cerrado') {
+                        accionAuditoria = `<span class="badge bg-secondary w-100"><i class="bi bi-check-all me-1"></i> Auditoría Cerrada</span>`;
+                    } else {
+                        accionAuditoria = `<span class="badge bg-success bg-opacity-10 text-success border border-success w-100">Aceptado (Desv: ${m.desviacionPorcentaje ? m.desviacionPorcentaje.toFixed(1) : 0}%)</span>`;
+                    }
+
+                    const claseFila = m.estadoAuditoria === 'Requiere Cierre' ? 'row-critica' : '';
 
                     return `
                     <tr class="${claseFila}">
                         <td class="ps-4 text-muted small">${fecha}</td>
                         <td class="fw-bold text-dark">${m.insumo.nombreInsumo}</td>
-                        <td>${m.tipoclasi}</td>
+                        <td>${m.tipoclasi} <br><small class="text-muted">${m.esReutilizable ? '♻️ Reutilizable' : '🗑️ Desecho'}</small></td>
                         <td><span class="badge bg-light text-dark border">${m.cantidadperdida} ${m.insumo.unidadMedida}</span></td>
                         <td class="fw-bold text-danger">S/ ${m.costofinancierocal.toFixed(2)}</td>
-                        <td class="pe-4 text-center">${badgeAuditoria}</td>
+                        <td class="pe-4 text-center">${accionAuditoria}</td>
                     </tr>`;
                 }).join('');
 
@@ -162,6 +166,18 @@
         }
 
         window.onload = cargarReporteMermas;
+
+
+        async function cerrarIncidente(idMerma) {
+            if(confirm("¿Estás seguro de registrar la acción correctiva y cerrar este incidente?")) {
+            const res = await fetch(`/api/mermas/${idMerma}/cerrar`, { method: 'PUT' });
+            if(res.ok) {
+                alert("✅ Incidente cerrado exitosamente.");
+                location.reload();
+            }
+        }
+}
     </script>
+
 </body>
 </html>

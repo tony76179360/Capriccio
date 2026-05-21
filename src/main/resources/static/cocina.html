@@ -7,188 +7,383 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        .card-orden { border: 1px solid #ffc107; transition: all 0.3s; }
+        .card-orden.lista { border-color: #198754; background-color: #f8fff9; }
+        .card-orden .card-header { background-color: white; border-bottom: none; }
+        .cursor-pointer { cursor: pointer; transition: transform 0.2s; }
+        .cursor-pointer:hover { transform: translateY(-3px); box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important; }
+    </style>
 </head>
 <body>
 
     <div class="sidebar d-flex flex-column p-3">
         <h3 class="text-center mb-4"><span class="text-danger">C</span>apriccio</h3>
         <ul class="nav nav-pills flex-column mb-auto">
-            <li class="nav-item">
-                <a href="index.html" class="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
-            </li>
+            <li class="nav-item"><a href="index.html" class="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
             <li><a href="almacen.html" class="nav-link"><i class="bi bi-box-seam me-2"></i> Almacén </a></li>
             <li><a href="cocina.html" class="nav-link active"><i class="bi bi-egg-fried me-2"></i> Cocina</a></li>
             <li><a href="tienda.html" class="nav-link"><i class="bi bi-shop me-2"></i> Tienda</a></li>
             <li><a href="reporte_mermas.html" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reporte de Mermas</a></li>
         </ul>
-        <hr>
-        <div class="dropdown">
-            <small>Grupo 3 - Ing. Sistemas</small>
-        </div>
+        <hr><div class="dropdown"><small>Grupo 3 - Ing. Sistemas</small></div>
     </div>
 
     <div class="main-content">
-        
-        <nav class="navbar navbar-expand-lg navbar-light bg-white rounded shadow-sm mb-4 px-3">
-            <div class="container-fluid">
-                <h5 class="m-0 fw-bold">Centro de Producción y Repostería</h5>
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-bell fs-4 me-3"></i>
-                    <span class="badge bg-primary rounded-pill">Oscar Ramos</span>
+        <h5 class="fw-bold mb-4 text-secondary">Cocina - Operaciones y Mermas</h5>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 border-start border-primary border-4 h-100 p-3 d-flex flex-row align-items-center justify-content-between cursor-pointer" data-bs-toggle="modal" data-bs-target="#modalPedirInsumos">
+                    <div>
+                        <h5 class="fw-bold m-0 text-primary">Pedir Insumos a Almacén</h5>
+                        <small class="text-muted">Solicitar reposición por mermas</small>
+                    </div>
+                    <i class="bi bi-cart3 fs-1 text-primary"></i>
                 </div>
             </div>
-        </nav>
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 border-start border-warning border-4 h-100 p-3 d-flex flex-row align-items-center justify-content-between cursor-pointer" onclick="enviarATienda()">
+                    <div>
+                        <h5 class="fw-bold m-0 text-warning">Enviar a Tienda</h5>
+                        <small class="text-muted">Registrar producción a vitrina</small>
+                    </div>
+                    <i class="bi bi-box-seam fs-1 text-warning"></i>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 border-start border-danger border-4 h-100 p-3 d-flex flex-row align-items-center justify-content-between cursor-pointer" data-bs-toggle="modal" data-bs-target="#modalMerma">
+                    <div>
+                        <h5 class="fw-bold m-0 text-danger">Registrar Merma</h5>
+                        <small class="text-muted">Reportar incidentes en preparación</small>
+                    </div>
+                    <i class="bi bi-exclamation-triangle fs-1 text-danger"></i>
+                </div>
+            </div>
+        </div>
 
-        <div class="container-fluid">
+        <h6 class="fw-bold text-warning mb-3"><i class="bi bi-clipboard2-check me-2"></i> Órdenes en Preparación</h6>
+        <div class="row g-3 mb-5" id="contenedor-ordenes">
+            <div class="col-12 text-muted">Buscando órdenes asignadas a cocina...</div>
+        </div>
+
+        <h6 class="fw-bold text-dark mb-3">Inventario de Insumos sin Procesar (Mesa de Cocina)</h6>
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-muted small fw-bold">
+                        <tr>
+                            <th class="ps-4">Insumo</th>
+                            <th>Categoría</th>
+                            <th>Cantidad en Mesa</th>
+                            <th class="pe-4">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-interino">
+                        <tr><td colspan="4" class="text-center py-4 text-muted">Cargando inventario interino...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="modalMerma"><div class="modal-dialog"><div class="modal-content p-3">
+        <h5 class="text-danger fw-bold"><i class="bi bi-trash3 me-2"></i> Registrar Merma</h5>
+        <form id="formMerma" class="mt-3">
             
-            <div class="row g-4 mb-5 justify-content-center">
-                <div class="col-md-5">
-                    <div class="card card-option shadow-sm h-100">
-                        <div class="img-container">
-                            <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=800" alt="Pedir Insumos">
-                        </div>
-                        <div class="card-body text-center p-4">
-                            <div class="icon-box bg-primary-subtle text-primary mx-auto">
-                                <i class="bi bi-cart-plus-fill fs-2"></i>
-                            </div>
-                            <h4 class="fw-bold">Pedir Insumos</h4>
-                            <p class="text-muted mb-4">Solicitar materia prima al Almacén Central para la producción.</p>
-                            <a href="crear_pedido.html" class="btn btn-primary w-100 py-2">Crear Requerimiento</a>
-                        </div>
-                    </div>
-                </div>
+            <label class="small fw-bold mb-1">¿Ocurrió preparando una orden?</label>
+            <select class="form-select mb-3 bg-light" id="ordenMerma">
+                <option value="">-- No, fue merma general --</option>
+                </select>
 
-                <div class="col-md-5">
-                    <div class="card card-option shadow-sm h-100">
-                        <div class="img-container">
-                            <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800" alt="Enviar Tienda">
-                        </div>
-                        <div class="card-body text-center p-4">
-                            <div class="icon-box bg-success-subtle text-success mx-auto">
-                                <i class="bi bi-send-check-fill fs-2"></i>
-                            </div>
-                            <h4 class="fw-bold">Enviar a Tienda</h4>
-                            <p class="text-muted mb-4">Registrar la salida de tortas terminadas hacia vitrina de ventas.</p>
-                            <a href="enviar_tienda.html" class="btn btn-success w-100 py-2" style="background-color: #28a745; border:none;">Registrar Salida</a>
-                        </div>
-                    </div>
-                </div>
+            <label class="small fw-bold mb-1">Insumo afectado</label>
+            <select class="form-select mb-3" id="selectInsumoMerma" required></select>
+            
+            <label class="small fw-bold mb-1">Cantidad Perdida</label>
+            <input type="number" step="0.01" class="form-control mb-3" id="cantidadMerma" placeholder="Ej. 1.50" required>
+            
+            <label class="small fw-bold mb-1">Causa</label>
+            <select class="form-select mb-3" id="causaMerma">
+                <option value="Técnica (Error en proceso)">Técnica (Error en proceso)</option>
+                <option value="Calidad (Mal estado)">Calidad (Mal estado)</option>
+                <option value="Vencimiento">Vencimiento</option>
+            </select>
+            
+            <div class="form-check form-switch mb-4">
+                <input class="form-check-input" type="checkbox" id="esReutilizable">
+                <label class="form-check-label fw-bold text-dark" for="esReutilizable">¿Es reutilizable para sub-producción?</label>
             </div>
+            
+            <input type="hidden" id="idUsuario" value="1">
+            <button type="submit" class="btn btn-danger w-100 fw-bold">Registrar, Auditar y Descontar</button>
+        </form>
+    </div></div></div>
 
-            <div class="card shadow-sm border-0 mb-5">
-                <div class="card-header bg-white py-3 border-0">
-                    <h5 class="fw-bold m-0 text-warning"><i class="bi bi-clipboard-data me-2"></i> Producción Programada</h5>
-                </div>
-                <div class="card-body p-0">
-                    <div class="list-group list-group-flush">
-                        <div class="list-group-item py-3 px-4 d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="fw-bold fs-5">Torta Selva Negra</span>
-                                <span class="badge bg-warning-subtle text-warning border border-warning ms-3">5 Unidades</span>
-                            </div>
-                            <button class="btn btn-sm btn-outline-warning">Iniciar Preparación</button>
-                        </div>
-                        <div class="list-group-item py-3 px-4 d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="fw-bold fs-5">Torta Helada Especial</span>
-                                <span class="badge bg-warning-subtle text-warning border border-warning ms-3">3 Unidades</span>
-                            </div>
-                            <button class="btn btn-sm btn-outline-warning">Iniciar Preparación</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="modal fade" id="modalPedirInsumos"><div class="modal-dialog"><div class="modal-content p-3">
+        <h5 class="text-primary fw-bold"><i class="bi bi-cart-plus me-2"></i> Solicitar Reposición Extra</h5>
+        <p class="small text-muted mb-3">Si tuviste una merma y te faltan ingredientes para terminar la orden, solicítalos aquí. Se descontarán del almacén central y llegarán a tu mesa.</p>
+        <form id="formPedirInsumos" class="mt-2">
+            
+            <label class="small fw-bold mb-1">Insumo a solicitar</label>
+            <select class="form-select mb-3" id="selectInsumoPedir" required></select>
+            
+            <label class="small fw-bold mb-1">Cantidad Necesaria</label>
+            <input type="number" step="0.01" class="form-control mb-4" id="cantidadPedir" placeholder="Ej. 0.50" required>
+            
+            <button type="submit" class="btn btn-primary w-100 fw-bold"><i class="bi bi-send me-1"></i> Enviar Solicitud a Almacén Central</button>
+        </form>
+    </div></div></div>
 
-            <div class="card shadow-sm border-0">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="fw-bold m-0">Insumos en Estación de Trabajo</h5>
-                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalMerma">
-                            <i class="bi bi-exclamation-triangle me-1"></i> Reportar Merma
-                        </button>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-light text-secondary small fw-bold">
-                                <tr>
-                                    <th>Insumo</th>
-                                    <th>Categoría</th>
-                                    <th>Stock Actual</th>
-                                    <th>Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabla-cocina">
-                                </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <div class="modal fade" id="modalMerma" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title"><i class="bi bi-trash3-fill me-2"></i> Registro de Merma</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <form id="formMerma">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Insumo afectado</label>
-                            <select class="form-select" id="selectInsumo" required></select>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <label class="form-label fw-bold">Cantidad Perdida</label>
-                                <input type="number" step="0.01" class="form-control" id="cantidadMerma" required>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label fw-bold">Causa</label>
-                                <select class="form-select" id="causaMerma" required>
-                                    <option value="Técnica">Técnica</option>
-                                    <option value="Calidad">Calidad</option>
-                                    <option value="Vencimiento">Vencimiento</option>
-                                </select>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-danger w-100 py-2">Confirmar Registro</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        async function cargarData() {
-            try {
-                const res = await fetch('/api/insumos');
-                const insumos = await res.json();
-                
-                const tabla = document.getElementById('tabla-cocina');
-                const select = document.getElementById('selectInsumo');
-                
-                tabla.innerHTML = insumos.map(i => `
-                    <tr>
-                        <td class="fw-bold">${i.nombreInsumo}</td>
-                        <td>Materia Prima</td>
-                        <td><span class="badge bg-secondary fs-6">${i.stockTotalActual} ${i.unidadMedida}</span></td>
-                        <td><span class="${i.stockTotalActual > i.stockMinimoAlerta ? 'text-success' : 'text-danger'} fw-bold">
-                            ${i.stockTotalActual > i.stockMinimoAlerta ? 'Óptimo' : 'Stock Crítico'}
-                        </span></td>
-                    </tr>
-                `).join('');
+        let listaOrdenesBackend = [];
+        let ordenesListasParaEnviar = [];
+        let insumosDB = [];
 
-                select.innerHTML = '<option value="">Seleccione insumo...</option>' + 
-                    insumos.map(i => `<option value="${i.idInsumo}">${i.nombreInsumo}</option>`).join('');
+        const recetas = {
+            1: [ { idInsumo: 1, cantBase: 0.50 }, { idInsumo: 2, cantBase: 0.25 }, { idInsumo: 3, cantBase: 6.00 } ],
+            2: [ { idInsumo: 4, cantBase: 0.50 }, { idInsumo: 5, cantBase: 0.50 }, { idInsumo: 6, cantBase: 0.50 }, { idInsumo: 1, cantBase: 0.30 }, { idInsumo: 3, cantBase: 4.00 } ]
+        };
 
-            } catch (e) { console.error(e); }
+        window.onload = async () => {
+            cargarAlmacenInterino();
+            await cargarOrdenesCocina();
+            await cargarInsumosGenerales();
+        };
+
+        function cargarAlmacenInterino() {
+            const interino = JSON.parse(localStorage.getItem('almacenInterino')) || [];
+            const interinoLimpio = interino.filter(i => i.cantidad > 0.01);
+            const tbody = document.getElementById('tabla-interino');
+
+            if (interinoLimpio.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-danger fw-bold"><i class="bi bi-exclamation-circle me-1"></i> No hay materia prima disponible. Pide al almacén.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = interinoLimpio.map(i => `
+                <tr>
+                    <td class="ps-4 fw-bold">${i.nombre}</td>
+                    <td class="text-muted">Abarrotes</td>
+                    <td><span class="badge bg-secondary fs-6 px-3">${i.cantidad.toFixed(2)} ${i.unidad}</span></td>
+                    <td class="pe-4 text-success fw-bold">Óptimo</td>
+                </tr>
+            `).join('');
         }
 
-        window.onload = cargarData;
+        async function cargarOrdenesCocina() {
+            try {
+                const res = await fetch('/api/ordenes/en-proceso');
+                listaOrdenesBackend = await res.json();
+                
+                // Llenar las tarjetas
+                const contenedor = document.getElementById('contenedor-ordenes');
+                if(listaOrdenesBackend.length === 0) {
+                    contenedor.innerHTML = '<div class="col-12 text-success fw-bold">No hay órdenes pendientes por preparar.</div>';
+                } else {
+                    contenedor.innerHTML = listaOrdenesBackend.map(o => `
+                        <div class="col-md-4" id="tarjeta-orden-${o.idOrden}">
+                            <div class="card card-orden h-100 shadow-sm">
+                                <div class="card-body">
+                                    <h6 class="fw-bold mb-3">#${o.idOrden} - ${o.nombreProducto}</h6>
+                                    <p class="mb-4 small">Cantidad: <span class="badge bg-warning text-dark px-2 py-1 ms-1">${o.cantidadSolicitada} unidades</span></p>
+                                    <button class="btn btn-outline-warning text-dark fw-bold w-100" id="btn-prep-${o.idOrden}" onclick="marcarComoPreparada(${o.idOrden})">
+                                        <i class="bi bi-fire me-1"></i> Preparar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                // Llenar el selector del Modal de Mermas
+                const selectOrdenMerma = document.getElementById('ordenMerma');
+                selectOrdenMerma.innerHTML = '<option value="">-- No, fue merma general --</option>' + 
+                    listaOrdenesBackend.map(o => `<option value="${o.idOrden}">Orden #${o.idOrden} - ${o.nombreProducto}</option>`).join('');
+
+            } catch (e) { console.error("Error:", e); }
+        }
+
+        async function cargarInsumosGenerales() {
+            const res = await fetch('/api/insumos');
+            insumosDB = await res.json();
+            const opciones = insumosDB.map(i => `<option value="${i.idInsumo}">${i.nombreInsumo}</option>`).join('');
+            document.getElementById('selectInsumoMerma').innerHTML = opciones;
+            document.getElementById('selectInsumoPedir').innerHTML = opciones;
+        }
+
+        function marcarComoPreparada(idOrden) {
+            const ordenObj = listaOrdenesBackend.find(o => o.idOrden === idOrden);
+            if (!ordenesListasParaEnviar.find(o => o.idOrden === idOrden)) ordenesListasParaEnviar.push(ordenObj);
+
+            document.getElementById(`tarjeta-orden-${idOrden}`).firstElementChild.classList.add('lista');
+            const btn = document.getElementById(`btn-prep-${idOrden}`);
+            btn.classList.replace('btn-outline-warning', 'btn-success');
+            btn.classList.replace('text-dark', 'text-white');
+            btn.innerHTML = '<i class="bi bi-check2-circle me-1"></i> Lista para Tienda';
+            btn.disabled = true;
+        }
+
+        // ================= CICLO DE MERMAS Y REPOSICIÓN =================
+
+        // ACCIÓN 1: Registrar Merma (Se cae la harina)
+        document.getElementById('formMerma').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const idInsumo = parseInt(document.getElementById('selectInsumoMerma').value);
+            const cantidadPerdida = parseFloat(document.getElementById('cantidadMerma').value);
+            const idOrden = document.getElementById('ordenMerma').value;
+
+            const datosMerma = {
+                insumo: { idInsumo: idInsumo },
+                cantidadperdida: cantidadPerdida,
+                tipoclasi: document.getElementById('causaMerma').value,
+                idusuario: parseInt(document.getElementById('idUsuario').value),
+                esReutilizable: document.getElementById('esReutilizable').checked,
+                idorden: idOrden ? parseInt(idOrden) : null 
+            };
+
+            // 1. Enviar a Java para Auditoría
+            const respuesta = await fetch('/api/mermas', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datosMerma)
+            });
+
+            if (respuesta.ok) {
+                // 2. Descontar físicamente de la mesa de la cocina (Almacén Interino)
+                let interino = JSON.parse(localStorage.getItem('almacenInterino')) || [];
+                let insumoMesa = interino.find(i => i.id === idInsumo);
+                
+                if (insumoMesa) {
+                    insumoMesa.cantidad -= cantidadPerdida;
+                    localStorage.setItem('almacenInterino', JSON.stringify(interino));
+                }
+                
+                alert("🚨 Merma reportada. Se ha descontado la cantidad de tu mesa de trabajo.\nSi te falta stock para terminar la orden, usa 'Pedir Insumos a Almacén'.");
+                location.reload(); 
+            }
+        });
+
+        // ACCIÓN 2: Pedir Insumos Extra (Para cubrir la merma)
+        document.getElementById('formPedirInsumos').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const idInsumo = parseInt(document.getElementById('selectInsumoPedir').value);
+            const cantidadPedida = parseFloat(document.getElementById('cantidadPedir').value);
+
+            // Buscamos el insumo original para saber su unidad y nombre
+            const insumoReal = insumosDB.find(i => i.idInsumo === idInsumo);
+
+            if (insumoReal.stockTotalActual < cantidadPedida) {
+                alert(`Error: El Almacén Central solo tiene ${insumoReal.stockTotalActual} ${insumoReal.unidadMedida}. No puede enviarte esa cantidad.`);
+                return;
+            }
+
+            // 1. Descontamos del Almacén Central (MySQL) mediante un UPDATE
+            insumoReal.stockTotalActual -= cantidadPedida;
+            await fetch('/api/insumos', {
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(insumoReal)
+            });
+
+            // 2. Lo agregamos a nuestra mesa de cocina (Almacén Interino)
+            let interino = JSON.parse(localStorage.getItem('almacenInterino')) || [];
+            let insumoMesa = interino.find(i => i.id === idInsumo);
+            
+            if (insumoMesa) {
+                insumoMesa.cantidad += cantidadPedida;
+            } else {
+                interino.push({ id: idInsumo, nombre: insumoReal.nombreInsumo, cantidad: cantidadPedida, unidad: insumoReal.unidadMedida });
+            }
+            localStorage.setItem('almacenInterino', JSON.stringify(interino));
+
+            alert("✅ Almacén central aprobó la solicitud. Los insumos ya están en tu mesa de trabajo.");
+            location.reload();
+        });
+
+
+        
+        // ACCIÓN 3: Enviar a Tienda (Terminación de ciclo con validación)
+        async function enviarATienda() {
+            if(ordenesListasParaEnviar.length === 0) {
+                alert("Selecciona al menos una orden en 'Preparar' antes de enviarla.");
+                return;
+            }
+
+            let interino = JSON.parse(localStorage.getItem('almacenInterino')) || [];
+            let requerimientosTotales = {}; 
+            
+            // 1. Calcular totales requeridos
+            for (let orden of ordenesListasParaEnviar) {
+                const receta = recetas[orden.idProducto];
+                if (receta) {
+                    receta.forEach(ingrediente => {
+                        const cantidadAUsar = ingrediente.cantBase * orden.cantidadSolicitada;
+                        if (!requerimientosTotales[ingrediente.idInsumo]) {
+                            const insumoReal = insumosDB.find(i => i.idInsumo === ingrediente.idInsumo);
+                            requerimientosTotales[ingrediente.idInsumo] = {
+                                nombre: insumoReal ? insumoReal.nombreInsumo : 'Insumo',
+                                cantidadRequerida: 0,
+                                unidad: insumoReal ? insumoReal.unidadMedida : ''
+                            };
+                        }
+                        requerimientosTotales[ingrediente.idInsumo].cantidadRequerida += cantidadAUsar;
+                    });
+                }
+            }
+
+            // 2. Comparar stock y crear lista de faltantes (Ignorando errores de decimales JS)
+            let faltantes = [];
+            for (let idInsumo in requerimientosTotales) {
+                let req = requerimientosTotales[idInsumo];
+                let insumoEnMesa = interino.find(i => i.id === parseInt(idInsumo));
+                let cantidadDisponible = insumoEnMesa ? insumoEnMesa.cantidad : 0;
+
+                let falta = req.cantidadRequerida - cantidadDisponible;
+                
+                // Solo si realmente falta más de 0.01 unidades/kilos, lo reportamos
+                if (falta > 0.01) {
+                    faltantes.push(`- ${req.nombre}: ${falta.toFixed(2)} ${req.unidad}`);
+                }
+            }
+
+            // 3. Alerta concreta y directa
+            if (faltantes.length > 0) {
+                alert("⚠️ Stock insuficiente en tu mesa para despachar:\n\nFaltan:\n" + 
+                    faltantes.join("\n") + 
+                    "\n\nPide la diferencia al almacén central.");
+                return; 
+            }
+
+            // 4. Procesar envío a tienda
+            if(confirm(`¿Despachar ${ordenesListasParaEnviar.length} producto(s) a la vitrina?`)) {
+                for (let orden of ordenesListasParaEnviar) {
+                    const receta = recetas[orden.idProducto];
+                    if (receta) {
+                        receta.forEach(ingrediente => {
+                            const cantidadAUsar = ingrediente.cantBase * orden.cantidadSolicitada;
+                            const insumoEnMesa = interino.find(i => i.id === ingrediente.idInsumo);
+                            if (insumoEnMesa) {
+                                insumoEnMesa.cantidad -= cantidadAUsar;
+                            }
+                        });
+                    }
+                    orden.estado = "Completado"; 
+                    await fetch('/api/ordenes', {
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(orden)
+                    });
+                }
+                
+                localStorage.setItem('almacenInterino', JSON.stringify(interino));
+                alert("✅ Productos despachados exitosamente.");
+                ordenesListasParaEnviar = [];
+                location.reload();
+            }
+        }
     </script>
 </body>
 </html>

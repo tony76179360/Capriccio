@@ -3,100 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capriccio - Dashboard</title>
+    <title>Capriccio - Tienda</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <!-- Iconos de Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        .vitrina-card { background-color: #f8f9fa; border: none; border-radius: 12px; transition: transform 0.2s; }
+        .vitrina-card:hover { transform: scale(1.02); }
+        .emoji-postre { font-size: 3rem; }
+    </style>
 </head>
 <body>
 
-    <!-- Sidebar Lateral -->
     <div class="sidebar d-flex flex-column p-3">
         <h3 class="text-center mb-4"><span class="text-danger">C</span>apriccio</h3>
         <ul class="nav nav-pills flex-column mb-auto">
-            <li class="nav-item">
-                <a href="index.html" class="nav-link active"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
-            </li>
+            <li class="nav-item"><a href="index.html" class="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
             <li><a href="almacen.html" class="nav-link"><i class="bi bi-box-seam me-2"></i> Almacén </a></li>
             <li><a href="cocina.html" class="nav-link"><i class="bi bi-egg-fried me-2"></i> Cocina</a></li>
-            <li><a href="tienda.html" class="nav-link"><i class="bi bi-shop me-2"></i> Tienda</a></li>
+            <li><a href="tienda.html" class="nav-link active"><i class="bi bi-shop me-2"></i> Tienda</a></li>
             <li><a href="reporte_mermas.html" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reporte de Mermas</a></li>
         </ul>
-        <hr>
-        <div class="dropdown">
-            <small>Grupo 3 - Ing. Sistemas</small>
-        </div>
+        <hr><div class="dropdown"><small>Grupo 3 - Ing. Sistemas</small></div>
     </div>
-    <div class="main-content">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold"><i class="bi bi-shop text-primary me-2"></i> Gestión de Tienda</h2>
-            <span class="badge bg-dark fs-6 px-3 py-2 shadow-sm"><i class="bi bi-person-circle me-1"></i> Admin: Antony</span>
-        </div>
 
-        <div class="row g-4">
+    <div class="main-content">
+        
+        <nav class="navbar navbar-expand-lg navbar-light bg-white rounded shadow-sm mb-4 px-4 py-3 d-flex justify-content-between">
+            <h4 class="m-0 fw-bold text-primary"><i class="bi bi-shop me-2"></i> Gestión de Tienda</h4>
+            <span class="badge bg-dark fs-6 px-3 py-2"><i class="bi bi-person-circle me-2"></i>Admin: Antony</span>
+        </nav>
+
+        <div class="row g-4 mb-4">
+            
             <div class="col-md-7">
-                <div class="card shadow-sm border-0 p-4 h-100">
-                    <h5 class="mb-4 fw-bold text-secondary"><i class="bi bi-grid-3x3-gap me-2"></i> Vitrina Actual (Productos Terminados)</h5>
-                    
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="card vitrina-card shadow-sm border-0 bg-light h-100">
-                                <div class="card-body text-center">
-                                    <h1 class="display-4 mb-2">🍫</h1>
-                                    <h5 class="fw-bold">Torta de Chocolate</h5>
-                                    <p class="text-muted small">Porciones enteras</p>
-                                    <h3 class="text-success fw-bold">5 <span class="fs-6 text-muted">unidades</span></h3>
-                                    <button class="btn btn-outline-success btn-sm w-100 mt-2 fw-bold"><i class="bi bi-cart-plus"></i> Registrar Venta</button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="card vitrina-card shadow-sm border-0 bg-light h-100">
-                                <div class="card-body text-center">
-                                    <h1 class="display-4 mb-2">🍰</h1>
-                                    <h5 class="fw-bold">Torta de Tres Leches</h5>
-                                    <p class="text-muted small">Porciones enteras</p>
-                                    <h3 class="text-danger fw-bold">1 <span class="fs-6 text-muted">unidad</span></h3>
-                                    <button class="btn btn-outline-success btn-sm w-100 mt-2 fw-bold"><i class="bi bi-cart-plus"></i> Registrar Venta</button>
-                                </div>
-                            </div>
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white pt-4 pb-2 border-0">
+                        <h6 class="fw-bold text-secondary"><i class="bi bi-grid-3x3-gap me-2"></i> Vitrina Actual (Productos Terminados)</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3" id="contenedor-vitrina">
+                            <div class="col-12 text-center text-muted py-5">Cargando vitrina...</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-5">
-                <div class="card shadow-sm border-0 p-4 h-100" style="border-top: 5px solid #fd550d !important;">
-                    <h5 class="mb-3 text-primary solid "><i class="bi bi-megaphone me-2"></i> Solicitar Producción</h5>
-                    <p class="text-muted small mb-4">Envía una alerta directa a la cocina para reponer la vitrina.</p>
-                    
-                    <form id="formOrden">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Producto a reponer</label>
-                            <select class="form-select form-select-lg" id="selectProducto" required>
-                                <option value="" disabled selected>-- Selecciona un postre --</option>
+                <div class="card shadow-sm border-0 border-top border-danger border-4 h-100">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold text-primary mb-2"><i class="bi bi-megaphone me-2"></i> Solicitar Producción</h6>
+                        <p class="text-muted small mb-4">Envía una alerta directa a la cocina para reponer la vitrina.</p>
+                        
+                        <form id="formOrden">
+                            <label class="fw-bold small mb-2">Producto a reponer</label>
+                            <select class="form-select mb-3" id="selectProducto" required>
+                                <option value="" selected disabled>-- Selecciona un postre --</option>
                                 <option value="1">Torta de Chocolate</option>
                                 <option value="2">Torta de Tres Leches</option>
                             </select>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Cantidad de Unidades</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white"><i class="bi bi-123"></i></span>
-                                <input type="number" class="form-control form-control-lg" id="cantidadSolicitada" min="1" required placeholder="Ej: 3">
-                            </div>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-lg w-100 fw-bold shadow-sm" style="background-color: #fd2d0d; color: white;">
-                            <i class="bi bi-send-fill me-2"></i> Enviar Orden a Cocina
-                        </button>
-                    </form>
 
-                    <div id="alertaExito" class="alert alert-success mt-4 d-none">
-                        <i class="bi bi-check-circle-fill me-2"></i> ¡Orden enviada a cocina correctamente!
+                            <label class="fw-bold small mb-2">Cantidad de Unidades</label>
+                            <input type="number" class="form-control mb-4" id="cantidadSolicitada" placeholder="Ej: 3" required min="1">
+                            
+                            <button type="submit" class="btn btn-danger w-100 py-2 fw-bold" id="btn-enviar-orden">
+                                <i class="bi bi-send-fill me-2"></i> Enviar Orden a Cocina
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white pt-4 pb-3 border-0 d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold text-success m-0"><i class="bi bi-cash-coin me-2"></i> Historial de Ventas de Hoy</h6>
+                        <h5 class="fw-bold m-0 text-dark">Ingresos Totales: <span id="total-ventas" class="text-success ms-2">S/ 0.00</span></h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light text-muted small fw-bold">
+                                <tr>
+                                    <th class="ps-4">Hora de Venta</th>
+                                    <th>Producto Entregado</th>
+                                    <th>Precio Unitario</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-ventas">
+                                <tr><td colspan="3" class="text-center py-4 text-muted">Aún no hay ventas registradas hoy.</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -105,49 +104,159 @@
     </div>
 
     <script>
+        // Catálogo de productos para la UI (AHORA CON PRECIOS)
+        const catalogo = {
+            1: { nombre: 'Torta de Chocolate', emoji: '🍫', precio: 45.00 },
+            2: { nombre: 'Torta de Tres Leches', emoji: '🍰', precio: 50.00 }
+        };
+
+        window.onload = async () => {
+            await absorberProductosCompletados();
+            renderizarVitrina();
+            renderizarTablaVentas();
+        };
+
+        // 1. RECIBIR TORTAS DE LA COCINA
+        async function absorberProductosCompletados() {
+            try {
+                const res = await fetch('/api/ordenes/completadas');
+                const ordenesLlegando = await res.json();
+                
+                if (ordenesLlegando.length > 0) {
+                    let vitrina = JSON.parse(localStorage.getItem('vitrinaStock')) || { 1: 0, 2: 0 };
+
+                    for (let orden of ordenesLlegando) {
+                        vitrina[orden.idProducto] = (vitrina[orden.idProducto] || 0) + orden.cantidadSolicitada;
+                        orden.estado = "En Vitrina";
+                        await fetch('/api/ordenes', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(orden)
+                        });
+                    }
+
+                    localStorage.setItem('vitrinaStock', JSON.stringify(vitrina));
+                    alert("¡Llegaron nuevos productos frescos de la cocina a la vitrina! 🚚🍰");
+                }
+            } catch (e) {
+                console.error("Error al revisar llegadas de cocina:", e);
+            }
+        }
+
+        // 2. DIBUJAR LA VITRINA
+        function renderizarVitrina() {
+            let vitrina = JSON.parse(localStorage.getItem('vitrinaStock')) || { 1: 0, 2: 0 };
+            const contenedor = document.getElementById('contenedor-vitrina');
+            
+            let html = '';
+            for (let id in catalogo) {
+                const cantidad = vitrina[id] || 0;
+                const claseColor = cantidad > 0 ? 'text-success' : 'text-danger';
+                const botonVenta = cantidad > 0 
+                    ? `<button class="btn btn-outline-success btn-sm w-100 fw-bold" onclick="registrarVenta(${id})"><i class="bi bi-cart-check me-1"></i> Registrar Venta</button>`
+                    : `<button class="btn btn-outline-secondary btn-sm w-100" disabled>Sin Stock</button>`;
+
+                html += `
+                <div class="col-md-6">
+                    <div class="card vitrina-card h-100 p-3 text-center">
+                        <div class="emoji-postre mb-2">${catalogo[id].emoji}</div>
+                        <h6 class="fw-bold mb-1">${catalogo[id].nombre}</h6>
+                        <small class="text-primary fw-bold">S/ ${catalogo[id].precio.toFixed(2)}</small>
+                        <h4 class="fw-bold ${claseColor} my-3">${cantidad} <span class="fs-6 fw-normal text-dark">unidades</span></h4>
+                        ${botonVenta}
+                    </div>
+                </div>`;
+            }
+            contenedor.innerHTML = html;
+        }
+
+        // 3. REGISTRAR UNA VENTA (Descontar de Vitrina y Agregar a Tabla)
+        function registrarVenta(idProducto) {
+            let vitrina = JSON.parse(localStorage.getItem('vitrinaStock'));
+            
+            if (vitrina[idProducto] > 0) {
+                // Descontamos 1 de la vitrina
+                vitrina[idProducto] -= 1; 
+                localStorage.setItem('vitrinaStock', JSON.stringify(vitrina));
+                
+                // Creamos el registro de la venta
+                let historialVentas = JSON.parse(localStorage.getItem('historialVentas')) || [];
+                historialVentas.push({
+                    producto: catalogo[idProducto].nombre,
+                    precio: catalogo[idProducto].precio,
+                    fecha: new Date().toISOString()
+                });
+                localStorage.setItem('historialVentas', JSON.stringify(historialVentas));
+
+                // Redibujamos las dos partes de la pantalla
+                renderizarVitrina(); 
+                renderizarTablaVentas();
+            }
+        }
+
+        // 4. DIBUJAR LA TABLA DE VENTAS Y CALCULAR EL TOTAL
+        function renderizarTablaVentas() {
+            let historialVentas = JSON.parse(localStorage.getItem('historialVentas')) || [];
+            const tbody = document.getElementById('tabla-ventas');
+            const totalUI = document.getElementById('total-ventas');
+
+            if (historialVentas.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-muted">Aún no hay ventas registradas hoy.</td></tr>';
+                totalUI.innerText = "S/ 0.00";
+                return;
+            }
+
+            // Calculamos el dinero total sumando todos los precios
+            const sumaTotal = historialVentas.reduce((total, venta) => total + venta.precio, 0);
+            totalUI.innerText = `S/ ${sumaTotal.toFixed(2)}`;
+
+            // Dibujamos las filas (usamos .reverse() para que la última venta salga arriba)
+            tbody.innerHTML = [...historialVentas].reverse().map(v => {
+                const horaFomateada = new Date(v.fecha).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+                return `
+                <tr>
+                    <td class="ps-4 text-muted small"><i class="bi bi-clock me-1"></i> ${horaFomateada}</td>
+                    <td class="fw-bold">${v.producto}</td>
+                    <td class="text-success fw-bold">S/ ${v.precio.toFixed(2)}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        // 5. SOLICITAR PRODUCCIÓN A COCINA (Mantenido intacto)
         document.getElementById('formOrden').addEventListener('submit', async (e) => {
             e.preventDefault(); 
-            
-            const selectProd = document.getElementById('selectProducto');
-            const idProducto = selectProd.value;
-            const nombreProducto = selectProd.options[selectProd.selectedIndex].text;
-            const cantidad = document.getElementById('cantidadSolicitada').value;
+            const btn = document.getElementById('btn-enviar-orden');
+            btn.innerHTML = 'Enviando...';
+            btn.disabled = true;
 
-            // Preparamos los datos tal como los necesita tu base de datos
+            const sel = document.getElementById('selectProducto');
             const orden = {
-                idProducto: parseInt(idProducto),
-                nombreProducto: nombreProducto,
-                cantidadSolicitada: parseInt(cantidad),
-                cantidadAProducir: parseInt(cantidad), 
-                idUsuario: 1,  // Tu usuario Antony
-                estado: "Pendiente"
+                idProducto: parseInt(sel.value), 
+                nombreProducto: sel.options[sel.selectedIndex].text,
+                cantidadSolicitada: parseInt(document.getElementById('cantidadSolicitada').value),
+                cantidadAProducir: parseInt(document.getElementById('cantidadSolicitada').value), 
+                idUsuario: 1, 
+                estado: "Pendiente" 
             };
 
             try {
-                // Hacemos la petición POST a tu Java
-                const res = await fetch('/api/ordenes', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(orden)
+                const res = await fetch('/api/ordenes', { 
+                    method: 'POST', 
+                    headers: {'Content-Type': 'application/json'}, 
+                    body: JSON.stringify(orden) 
                 });
-
-                if(res.ok) {
-                    // Mostrar mensaje de éxito y limpiar formulario
-                    document.getElementById('alertaExito').classList.remove('d-none');
-                    document.getElementById('formOrden').reset();
-                    
-                    // Ocultar la alerta después de 3 segundos
-                    setTimeout(() => {
-                        document.getElementById('alertaExito').classList.add('d-none');
-                    }, 3000);
-                } else {
-                    alert("Hubo un error al enviar la orden. Revisa la consola.");
+                
+                if(res.ok) { 
+                    alert("¡Orden enviada vía API exitosamente! 📢"); 
+                    document.getElementById('formOrden').reset(); 
                 }
             } catch (error) {
-                console.error("Error de conexión:", error);
+                alert("Error al conectar con el servidor.");
+            } finally {
+                btn.innerHTML = '<i class="bi bi-send-fill me-2"></i> Enviar Orden a Cocina';
+                btn.disabled = false;
             }
         });
     </script>
-    
 </body>
 </html>

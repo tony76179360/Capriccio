@@ -10,29 +10,24 @@
 </head>
 <body>
 
-<!-- Sidebar Lateral -->
     <div class="sidebar d-flex flex-column p-3">
         <h3 class="text-center mb-4"><span class="text-danger">C</span>apriccio</h3>
         <ul class="nav nav-pills flex-column mb-auto">
-            <li class="nav-item">
-                <a href="index.html" class="nav-link active"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
-            </li>
-            <li><a href="almacen.html" class="nav-link"><i class="bi bi-box-seam me-2"></i> Almacén </a></li>
+            <li class="nav-item"><a href="index.html" class="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
+            <li><a href="almacen.html" class="nav-link active"><i class="bi bi-box-seam me-2"></i> Almacén </a></li>
             <li><a href="cocina.html" class="nav-link"><i class="bi bi-egg-fried me-2"></i> Cocina</a></li>
             <li><a href="tienda.html" class="nav-link"><i class="bi bi-shop me-2"></i> Tienda</a></li>
             <li><a href="reporte_mermas.html" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reporte de Mermas</a></li>
         </ul>
         <hr>
-        <div class="dropdown">
-            <small>Grupo 3 - Ing. Sistemas</small>
-        </div>
+        <div class="dropdown"><small>Grupo 3 - Ing. Sistemas</small></div>
     </div>
 
     <div class="main-content">
         <nav class="navbar navbar-expand-lg navbar-light bg-white rounded shadow-sm mb-4 px-3">
             <div class="container-fluid">
                 <h5 class="m-0 fw-bold">Planificación y Despacho de Producción</h5>
-                <a href="almacen.html" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Volver Almacen</a>
+                <a href="almacen.html" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Volver Almacén</a>
             </div>
         </nav>
 
@@ -43,50 +38,8 @@
                     <h6 class="m-0 fw-bold text-primary"><i class="bi bi-calendar-check me-2"></i> Tortas Programadas para Hoy</h6>
                 </div>
                 <div class="card-body">
-                    <div class="list-group list-group-flush">
-                        
-                        <div class="list-group-item py-3">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <span class="fw-bold">Torta Selva Negra</span>
-                                    <span class="badge bg-light text-dark border ms-2">5 Unidades</span>
-                                </div>
-                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#insumosSelvaNegra">
-                                    Ver Insumos <i class="bi bi-chevron-down"></i>
-                                </button>
-                            </div>
-                            <div class="collapse mt-3" id="insumosSelvaNegra">
-                                <div class="p-3 bg-light rounded small">
-                                    <div class="row">
-                                        <div class="col-md-4">• Harina de Chocolate: 2.5kg</div>
-                                        <div class="col-md-4">• Cerezas en Almíbar: 1 frasco</div>
-                                        <div class="col-md-4">• Crema de Leche: 2Lt</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="list-group-item py-3">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <span class="fw-bold">Torta Helada Especial</span>
-                                    <span class="badge bg-light text-dark border ms-2">3 Unidades</span>
-                                </div>
-                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#insumosHelada">
-                                    Ver Insumos <i class="bi bi-chevron-down"></i>
-                                </button>
-                            </div>
-                            <div class="collapse mt-3" id="insumosHelada">
-                                <div class="p-3 bg-light rounded small">
-                                    <div class="row">
-                                        <div class="col-md-4">• Colapez: 150gr</div>
-                                        <div class="col-md-4">• Gelatina de Fresa: 1kg</div>
-                                        <div class="col-md-4">• Bizcochuelo Vainilla: 3 unid</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+                    <div class="list-group list-group-flush" id="lista-ordenes">
+                        <div class="text-center text-muted py-3">Buscando órdenes pendientes...</div>
                     </div>
                 </div>
             </div>
@@ -100,40 +53,20 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="ps-4">Insumo Requerido</th>
-                                <th>Cantidad Solicitada</th>
+                                <th>Cantidad Necesaria</th>
                                 <th>U. Medida</th>
-                                <th style="width: 200px;">Cantidad Entregada</th>
+                                <th>Stock Actual Almacén</th>
                                 <th class="text-center">Estado</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td class="ps-4 fw-bold">Harina de Chocolate</td>
-                                <td>2.50</td>
-                                <td>Kg</td>
-                                <td><input type="number" class="form-control form-control-sm border-danger" placeholder="Ej: 2.50"></td>
-                                <td class="text-center"><i class="bi bi-dash-circle text-muted"></i></td>
-                            </tr>
-                            <tr>
-                                <td class="ps-4 fw-bold">Crema de Leche</td>
-                                <td>2.00</td>
-                                <td>Lt</td>
-                                <td><input type="number" class="form-control form-control-sm border-danger" placeholder="Ej: 2.00"></td>
-                                <td class="text-center"><i class="bi bi-dash-circle text-muted"></i></td>
-                            </tr>
-                            <tr>
-                                <td class="ps-4 fw-bold">Gelatina de Fresa</td>
-                                <td>1.00</td>
-                                <td>Kg</td>
-                                <td><input type="number" class="form-control form-control-sm border-danger" placeholder="Ej: 1.00"></td>
-                                <td class="text-center"><i class="bi bi-dash-circle text-muted"></i></td>
-                            </tr>
+                        <tbody id="tabla-despacho">
+                            <tr><td colspan="5" class="text-center py-4 text-muted">Selecciona una orden arriba para calcular los insumos automáticamente.</td></tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="card-footer bg-white text-end py-3">
-                    <button class="btn btn-secondary me-2">Rechazar Pedido</button>
-                    <button class="btn btn-danger px-4">Confirmar Entrega a Cocina</button>
+                    <button class="btn btn-secondary me-2" onclick="limpiarDespacho()">Cancelar</button>
+                    <button class="btn btn-danger px-4" id="btn-confirmar" disabled onclick="confirmarEntrega()">Confirmar Entrega a Cocina</button>
                 </div>
             </div>
 
@@ -141,5 +74,184 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // MOTOR DE RECETAS (Simula la base de datos de fórmulas)
+        // Las cantidades base son para 1 sola torta. El sistema las multiplicará.
+        const recetas = {
+            1: [ // ID 1 = Torta de Chocolate
+                { idInsumo: 1, nombre: 'Harina de Trigo', cantBase: 0.50, unidad: 'Kg' },
+                { idInsumo: 2, nombre: 'Cacao en polvo', cantBase: 0.25, unidad: 'Kg' },
+                { idInsumo: 3, nombre: 'Huevos', cantBase: 6.00, unidad: 'Unidades' }
+            ],
+            2: [ // ID 2 = Torta de Tres Leches
+                { idInsumo: 4, nombre: 'Leche Evaporada', cantBase: 0.50, unidad: 'Litros' },
+                { idInsumo: 5, nombre: 'Leche Condensada', cantBase: 0.50, unidad: 'Litros' },
+                { idInsumo: 6, nombre: 'Crema de Leche', cantBase: 0.50, unidad: 'Litros' },
+                { idInsumo: 1, nombre: 'Harina de Trigo', cantBase: 0.30, unidad: 'Kg' },
+                { idInsumo: 3, nombre: 'Huevos', cantBase: 4.00, unidad: 'Unidades' }
+            ]
+        };
+
+        let ordenSeleccionada = null; // Guarda la orden que se está atendiendo
+        let insumosEnBD = [];         // Guarda el stock real del backend
+        let calculoDespacho = [];     // Guarda la matemática final a descontar
+
+        // 1. Cargar Órdenes y Stock al iniciar
+        window.onload = async () => {
+            await cargarStockReal();
+            await cargarOrdenes();
+        };
+
+        async function cargarStockReal() {
+            const res = await fetch('/api/insumos');
+            insumosEnBD = await res.json();
+        }
+
+        async function cargarOrdenes() {
+            const res = await fetch('/api/ordenes/pendientes');
+            const ordenes = await res.json();
+            const contenedor = document.getElementById('lista-ordenes');
+            
+            if(ordenes.length === 0) {
+                contenedor.innerHTML = '<div class="text-center text-success py-3 fw-bold">✅ No hay órdenes pendientes.</div>';
+                return;
+            }
+
+            contenedor.innerHTML = ordenes.map(o => `
+                <div class="list-group-item py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="fw-bold">Orden #${o.idOrden} - ${o.nombreProducto}</span>
+                            <span class="badge bg-warning text-dark border ms-2">${o.cantidadSolicitada} Unidades</span>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" onclick='prepararDespacho(${JSON.stringify(o)})'>
+                            <i class="bi bi-box-arrow-in-down"></i> Calcular Insumos
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 2. Calcular la receta y armar la tabla roja
+        function prepararDespacho(orden) {
+            ordenSeleccionada = orden;
+            const receta = recetas[orden.idProducto];
+            
+            if(!receta) {
+                alert("La receta de este producto aún no está configurada en el sistema.");
+                return;
+            }
+
+            calculoDespacho = [];
+            let htmlTabla = '';
+            let stockSuficiente = true; // Validador de stock
+
+            receta.forEach(ingrediente => {
+                const cantidadTotalNecesaria = ingrediente.cantBase * orden.cantidadSolicitada;
+                
+                // Buscar el insumo en la BD para ver cuánto stock tenemos
+                const insumoBD = insumosEnBD.find(i => i.idInsumo === ingrediente.idInsumo);
+                const stockActual = insumoBD ? insumoBD.stockTotalActual : 0;
+                
+                const alcanza = stockActual >= cantidadTotalNecesaria;
+                if(!alcanza) stockSuficiente = false;
+
+                // Guardar para el momento de hacer el POST
+                calculoDespacho.push({
+                    insumoOriginal: insumoBD,
+                    cantidadADescontar: cantidadTotalNecesaria
+                });
+
+                htmlTabla += `
+                    <tr class="${alcanza ? '' : 'bg-danger bg-opacity-10'}">
+                        <td class="ps-4 fw-bold">${ingrediente.nombre}</td>
+                        <td class="text-primary fw-bold">${cantidadTotalNecesaria.toFixed(2)}</td>
+                        <td>${ingrediente.unidad}</td>
+                        <td class="${alcanza ? 'text-success' : 'text-danger fw-bold'}">${stockActual.toFixed(2)}</td>
+                        <td class="text-center">
+                            ${alcanza ? '<i class="bi bi-check-circle-fill text-success fs-5"></i>' : '<i class="bi bi-x-circle-fill text-danger fs-5" title="Stock Insuficiente"></i>'}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('tabla-despacho').innerHTML = htmlTabla;
+            
+            // Si no hay stock suficiente, bloqueamos el botón rojo
+            const btn = document.getElementById('btn-confirmar');
+            btn.disabled = !stockSuficiente;
+            if(!stockSuficiente) {
+                alert("⚠️ Cuidado: No tienes suficiente stock en el almacén para cubrir esta receta.");
+            }
+        }
+
+        function limpiarDespacho() {
+            ordenSeleccionada = null;
+            calculoDespacho = [];
+            document.getElementById('tabla-despacho').innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">Selecciona una orden arriba para calcular los insumos automáticamente.</td></tr>';
+            document.getElementById('btn-confirmar').disabled = true;
+        }
+
+        // 3. Ejecutar la transacción (Actualizar Stock y Orden)
+        async function confirmarEntrega() {
+            if(!ordenSeleccionada || calculoDespacho.length === 0) return;
+
+            document.getElementById('btn-confirmar').innerText = "Procesando...";
+            document.getElementById('btn-confirmar').disabled = true;
+
+            try {
+                // A) Descontar cada insumo en la base de datos
+                for(let item of calculoDespacho) {
+                    const insumoActualizado = { ...item.insumoOriginal }; // Copiamos el insumo
+                    insumoActualizado.stockTotalActual = insumoActualizado.stockTotalActual - item.cantidadADescontar; // Restamos
+
+                    // Enviamos el UPDATE a InsumoController
+                    await fetch('/api/insumos', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(insumoActualizado)
+                    });
+                }
+
+                // B) Actualizar el estado de la Orden para que desaparezca
+                ordenSeleccionada.estado = "En Proceso";
+                await fetch('/api/ordenes', {
+                    method: 'POST', // Usamos POST porque ya tiene ID, Spring hará un UPDATE
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(ordenSeleccionada)
+                });
+
+                // --- TRUCO TIC: Guardar en el Almacén Interino (Cocina) ---
+                let interino = JSON.parse(localStorage.getItem('almacenInterino') || '[]');
+                calculoDespacho.forEach(item => {
+                    let insumoCocina = interino.find(i => i.id === item.insumoOriginal.idInsumo);
+                    if (insumoCocina) {
+                        insumoCocina.cantidad += item.cantidadADescontar;
+                    } else {
+                        interino.push({
+                            id: item.insumoOriginal.idInsumo,
+                            nombre: item.insumoOriginal.nombreInsumo,
+                            cantidad: item.cantidadADescontar,
+                            unidad: item.insumoOriginal.unidadMedida
+                        });
+                    }
+                });
+                localStorage.setItem('almacenInterino', JSON.stringify(interino));
+                // ----------------------------------------------------------
+                alert("✅ Insumos despachados a cocina. El stock ha sido descontado automáticamente.");
+                
+                // Recargar todo para ver los cambios
+                limpiarDespacho();
+                await cargarStockReal();
+                await cargarOrdenes();
+
+            } catch(error) {
+                console.error("Error en la transacción:", error);
+                alert("Hubo un error al procesar el despacho.");
+            } finally {
+                document.getElementById('btn-confirmar').innerText = "Confirmar Entrega a Cocina";
+            }
+        }
+    </script>
 </body>
 </html>
