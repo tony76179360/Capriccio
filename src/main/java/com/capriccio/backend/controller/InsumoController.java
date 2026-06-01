@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/insumos")
-@CrossOrigin(origins = "*") // Esto permite que tu JavaScript se conecte sin bloqueos
+@CrossOrigin(origins = "*") 
 public class InsumoController {
 
     @Autowired
@@ -21,7 +21,7 @@ public class InsumoController {
         return insumoRepository.findAll();
     }
 
-    // Endpoint para guardar un nuevo insumo (desde el formulario)
+    // Endpoint para guardar un nuevo insumo 
     @PostMapping
     public Insumo guardarInsumo(@RequestBody Insumo insumo) {
         return insumoRepository.save(insumo);

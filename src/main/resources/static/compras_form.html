@@ -16,9 +16,9 @@
             <li class="nav-item">
                 <a href="index.html" class="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
             </li>
+            <li><a href="tienda.html" class="nav-link"><i class="bi bi-shop me-2"></i> Tienda</a></li>
             <li><a href="almacen.html" class="nav-link active"><i class="bi bi-box-seam me-2"></i> Almacén </a></li>
             <li><a href="cocina.html" class="nav-link"><i class="bi bi-egg-fried me-2"></i> Cocina</a></li>
-            <li><a href="tienda.html" class="nav-link"><i class="bi bi-shop me-2"></i> Tienda</a></li>
             <li><a href="reporte_mermas.html" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reporte de Mermas</a></li>
         </ul>
         <hr>
@@ -40,13 +40,13 @@
                 
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <h2 class="text-danger fw-bold">FACTURA DE COMPRA</h2>
-                        <p class="text-muted">Capriccio Pastelería Fina</p>
+                        <h2 class="text-danger fw-bold">INGRESAR FACTURA DE COMPRA</h2>
+                        <p class="text-muted">Capriccio Pastele ría Fina</p>
                     </div>
                     <div class="col-md-6 text-md-end">
                         <div class="mb-2">
-                            <label class="form-label fw-bold">N° de Orden:</label>
-                            <input type="text" class="form-control d-inline-block w-auto" placeholder="OC-0001">
+                            <label class="form-label fw-bold">N° de Factura :</label>
+                            <input type="text" class="form-control d-inline-block w-auto" placeholder="FC-0001">
                         </div>
                         <div>
                             <label class="form-label fw-bold">Fecha:</label>
@@ -85,15 +85,11 @@
                         <tbody id="detalle-compra">
                             <tr>
                                 <td>
-                                    <select class="form-select">
-                                        <option selected>Seleccione insumo...</option>
-                                        <option>Harina Preparada x 50kg</option>
-                                        <option>Mantequilla sin sal</option>
-                                        <option>Esencia de Vainilla</option>
-                                        <option>Azúcar Blanca Refinada</option>
+                                    <select class="form-select" id="selectInsumoCompra" required>
+                                        <option value="" selected disabled>Cargando insumos reales...</option>
                                     </select>
                                 </td>
-                                <td><input type="number" class="form-control" placeholder="0"></td>
+                                <td><input type="number" step="0.01" class="form-control" id="cantidadCompra" placeholder="0" required></td>
                                 <td>
                                     <select class="form-select">
                                         <option>Kg</option>
@@ -102,8 +98,8 @@
                                         <option>Sacos</option>
                                     </select>
                                 </td>
-                                <td><input type="number" class="form-control" placeholder="0.00"></td>
-                                <td><input type="text" class="form-control bg-light" readonly value="S/ 0.00"></td>
+                                <td><input type="number" step="0.01" class="form-control" id="precioCompra" placeholder="0.00" required></td>
+                                <td><input type="text" class="form-control bg-light" id="totalFila" placeholder="S/ 0.00" readonly></td>
                                 <td class="text-center"><button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button></td>
                             </tr>
                         </tbody>
@@ -117,18 +113,20 @@
                         </button>
                     </div>
                     <div class="col-md-6">
-                        <div class="card bg-light p-3 border-0">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Subtotal:</span>
-                                <strong>S/ 0.00</strong>
+                        <div class="card bg-light p-4 border-0 rounded-3 shadow-sm">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted fw-bold">Subtotal:</span>
+                                <span id="lblSubtotal" class="fw-bold text-dark fs-5">S/ 0.00</span>
                             </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>IGV (18%):</span>
-                                <strong>S/ 0.00</strong>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-muted fw-bold">IGV (18%):</span>
+                                <span id="lblIgv" class="fw-bold text-dark fs-5">S/ 0.00</span>
                             </div>
-                            <div class="d-flex justify-content-between border-top pt-2">
-                                <span class="h5 fw-bold">Total a Pagar:</span>
-                                <span class="h5 fw-bold text-danger">S/ 0.00</span>
+                            
+                            <div class="d-flex justify-content-between align-items-center border-top border-2 border-secondary-subtle pt-3 mt-1">
+                                <h5 class="m-0 fw-bold text-danger">Total a Pagar:</h5>
+                                <h4 class="m-0 fw-bold text-danger" id="lblTotalPagar">S/ 0.00</h4>
                             </div>
                         </div>
                     </div>
@@ -136,12 +134,93 @@
 
                 <div class="text-end mt-4">
                     <button class="btn btn-secondary me-2">Cancelar</button>
-                    <button class="btn btn-danger px-5">Guardar Orden</button>
+                    <button type="button" class="btn btn-danger" id="btnGuardarCompra">Guardar</button>
                 </div>
 
             </div>
         </div>
     </div>
+    <script>
+        let insumosDB = [];
 
+        // 1. AL CARGAR LA PÁGINA: Traer insumos de la base de datos
+        window.onload = async () => {
+            try {
+                const res = await fetch('/api/insumos');
+                insumosDB = await res.json();
+                
+                const select = document.getElementById('selectInsumoCompra');
+                if(select) {
+                    // Llenamos el select dinámicamente con los datos de MySQL
+                    select.innerHTML = '<option value="" selected disabled>Seleccione insumo...</option>' + 
+                        insumosDB.map(i => `<option value="${i.idInsumo}">${i.nombreInsumo} (${i.unidadMedida})</option>`).join('');
+                }
+            } catch (error) {
+                console.error("Error al conectar con la API de insumos:", error);
+            }
+        };
+        // --- MATEMÁTICA EN TIEMPO REAL ---
+        document.getElementById('cantidadCompra').addEventListener('input', calcularTotales);
+        document.getElementById('precioCompra').addEventListener('input', calcularTotales);
+
+        function calcularTotales() {
+            const cant = parseFloat(document.getElementById('cantidadCompra').value) || 0;
+            const prec = parseFloat(document.getElementById('precioCompra').value) || 0;
+            
+            // Cálculos
+            const total = cant * prec;
+            const subtotal = total / 1.18; // Calculando la base antes de impuestos
+            const igv = total - subtotal;
+
+            // Dibujar en pantalla
+            document.getElementById('totalFila').value = 'S/ ' + total.toFixed(2);
+            document.getElementById('lblSubtotal').innerText = 'S/ ' + subtotal.toFixed(2);
+            document.getElementById('lblIgv').innerText = 'S/ ' + igv.toFixed(2);
+            document.getElementById('lblTotalPagar').innerText = 'S/ ' + total.toFixed(2);
+        }
+        //  AL GUARDAR LA COMPRA: Sumar al stock y actualizar MySQL
+            document.getElementById('btnGuardarCompra').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('btnGuardarCompra');
+            const idInsumo = parseInt(document.getElementById('selectInsumoCompra').value);
+            const cantidadComprada = parseFloat(document.getElementById('cantidadCompra').value);
+            
+            if(!idInsumo || isNaN(cantidadComprada) || cantidadComprada <= 0) {
+                alert("⚠️ Por favor selecciona un insumo de la lista y digita una cantidad válida mayor a cero.");
+                return;
+            }
+
+            // Bloqueamos el botón para evitar dobles clics
+            btn.innerHTML = 'Guardando...';
+            btn.disabled = true;
+
+            // Buscamos el insumo original en nuestra lista
+            const insumoReal = insumosDB.find(i => i.idInsumo === idInsumo);
+            
+            // ¡EL PASO CLAVE! Le sumamos la nueva compra al stock que ya existía
+            insumoReal.stockTotalActual += cantidadComprada;
+            insumoReal.precio = precioCompra;
+            try {
+                // Enviamos el insumo actualizado a Java para que haga el UPDATE en la tabla
+                const respuesta = await fetch('/api/insumos', {
+                    method: 'POST', // Usamos POST para que Spring Data JPA haga el merge/update
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(insumoReal)
+                });
+                
+                if(respuesta.ok) {
+                    alert(`✅ Ingreso Exitoso: Se han sumado ${cantidadComprada} ${insumoReal.unidadMedida} a ${insumoReal.nombreInsumo}.`);
+                    // Redirigimos automáticamente al almacén para que veas tu nuevo stock brillar
+                    window.location.href = 'almacen.html'; 
+                }
+            } catch (error) {
+                alert("❌ Error al comunicar con el servidor backend.");
+            } finally {
+                btn.innerHTML = 'Guardar Orden';
+                btn.disabled = false;
+            }
+        });
+    </script>
 </body>
 </html>

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface InsumoRepository extends JpaRepository<Insumo, Integer> {
-    // Aquí Spring Boot ya te da métodos como save(), findAll(), delete(), etc.
+    // Aquí Spring Boot da métodos como save(), findAll(), delete(), etc.
 }

@@ -16,9 +16,9 @@
             <li class="nav-item">
                 <a href="index.html" class="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
             </li>
+            <li><a href="tienda.html" class="nav-link"><i class="bi bi-shop me-2"></i> Tienda</a></li>
             <li><a href="almacen.html" class="nav-link active"><i class="bi bi-box-seam me-2"></i> Almacén </a></li>
             <li><a href="cocina.html" class="nav-link"><i class="bi bi-egg-fried me-2"></i> Cocina</a></li>
-            <li><a href="tienda.html" class="nav-link"><i class="bi bi-shop me-2"></i> Tienda</a></li>
             <li><a href="reporte_mermas.html" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reporte de Mermas</a></li>
         </ul>
         <hr>
@@ -45,7 +45,7 @@
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="fw-bold m-0"><i class="bi bi-list-check me-2"></i> Stock Detallado de Pastelería</h5>
-                        <input type="text" id="buscarInsumo" class="form-control w-25" placeholder="Filtrar insumo...">
+                        <input type="text" id="filtroInsumo" class="form-control" placeholder="Filtrar insumo...">
                     </div>
                     
                     <div class="table-responsive">
@@ -56,13 +56,11 @@
                                     <th>Categoría</th>
                                     <th>Stock Actual</th>
                                     <th>U. Medida</th>
-                                    <th>Estado</th>
+                                    <th>PRECIO UNIT.</th> <th>ESTADO</th>
                                 </tr>
                             </thead>
-                            <tbody id="tabla-almacen">
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted">Conectando con el almacén central de datos...</td>
-                                </tr>
+                            <tbody id="tabla-insumos">
+                                <tr><td colspan="5">Conectando con el almacén central de datos...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -107,70 +105,144 @@
     </div>
 
     <script>
-        let listaInsumos = []; // Almacenará los datos locales para el buscador
+        let ordenesPendientes = [];
+        let insumosDB = [];
 
-        async function cargarStockAlmacen() {
-            try {
-                // Petición HTTP GET al Backend de Spring Boot
-                const respuesta = await fetch('/api/insumos');
-                listaInsumos = await respuesta.json();
-                
-                renderizarTabla(listaInsumos);
-            } catch (error) {
-                console.error("Error al conectar con la API de insumos:", error);
-                document.getElementById('tabla-almacen').innerHTML = `
-                    <tr>
-                        <td colspan="5" class="text-center text-danger fw-bold">
-                            ⚠️ Error de comunicación con el servidor. Verifica que tu Backend esté encendido.
-                        </td>
-                    </tr>`;
-            }
-        }
+        // Motor de recetas
+        const recetas = {
+            1: [ { idInsumo: 1, cantBase: 0.50 }, { idInsumo: 2, cantBase: 0.25 }, { idInsumo: 3, cantBase: 6.00 } ],
+            2: [ { idInsumo: 4, cantBase: 0.50 }, { idInsumo: 5, cantBase: 0.50 }, { idInsumo: 6, cantBase: 0.50 }, { idInsumo: 1, cantBase: 0.30 }, { idInsumo: 3, cantBase: 4.00 } ]
+        };
 
-        function renderizarTabla(datos) {
-            const tbody = document.getElementById('tabla-almacen');
-            
-            if(datos.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No hay insumos registrados en la base de datos.</td></tr>';
-                return;
-            }
+        window.onload = async () => {
+            await cargarInsumos();
+            await cargarOrdenesAlmacen();
+        };
 
-            tbody.innerHTML = datos.map(insumo => {
-                const stockActual = parseFloat(insumo.stockTotalActual);
-                const stockMinimo = parseFloat(insumo.stockMinimoAlerta);
-                
-                // Clasificación dinámica de alertas basada en tus estilos CSS
-                let badgeEstado = '';
-                if (stockActual <= stockMinimo) {
-                    badgeEstado = '<span class="badge bg-danger-subtle text-danger border border-danger">Crítico</span>';
-                } else if (stockActual <= stockMinimo * 1.5) {
-                    badgeEstado = '<span class="badge bg-warning-subtle text-warning border border-warning">Bajo</span>';
-                } else {
-                    badgeEstado = '<span class="badge bg-success-subtle text-success border border-success">Suficiente</span>';
-                }
-
-                return `
-                <tr>
-                    <td class="fw-bold">${insumo.nombreInsumo}</td>
-                    <td class="text-muted">Insumos Base</td>
-                    <td class="fs-5 fw-semibold">${stockActual.toFixed(2)}</td>
-                    <td>${insumo.unidadMedida}</td>
-                    <td>${badgeEstado}</td>
-                </tr>`;
-            }).join('');
-        }
-
-        // Lógica de búsqueda interactiva (Filtrado del JSON sin recargar página)
-        document.getElementById('buscarInsumo').addEventListener('input', (e) => {
+        // --- NUEVA LÓGICA DEL BUSCADOR ---
+        document.getElementById('filtroInsumo').addEventListener('input', (e) => {
             const textoBusqueda = e.target.value.toLowerCase();
-            const insumosFiltrados = listaInsumos.filter(i => 
+            // Filtramos el arreglo original buscando coincidencias en el nombre
+            const insumosFiltrados = insumosDB.filter(i => 
                 i.nombreInsumo.toLowerCase().includes(textoBusqueda)
             );
-            renderizarTabla(insumosFiltrados);
+            // Mandamos a dibujar solo los que coincidieron
+            renderizarTablaInsumos(insumosFiltrados);
         });
 
-        // Ejecutar carga automática al abrir la pantalla
-        window.onload = cargarStockAlmacen;
+        // 1. CARGAR INSUMOS DESDE JAVA
+        async function cargarInsumos() {
+            try {
+                const res = await fetch('/api/insumos');
+                insumosDB = await res.json();
+                renderizarTablaInsumos(insumosDB); // Dibujamos todos al inicio
+            } catch (e) { 
+                console.error("Error al cargar insumos:", e);
+                const tbody = document.getElementById('tabla-insumos');
+                if(tbody) tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-danger">Error al conectar con la base de datos.</td></tr>';
+            }
+        }
+
+        // FUNCIÓN SEPARADA PARA DIBUJAR LA TABLA (Reutilizable para el filtro)
+        function renderizarTablaInsumos(listaParaDibujar) {
+            const tbody = document.getElementById('tabla-insumos'); 
+            if(!tbody) return;
+
+            if(listaParaDibujar.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">No se encontraron insumos con ese nombre.</td></tr>';
+            } else {
+                tbody.innerHTML = listaParaDibujar.map(i => {
+                    let claseEstado = i.stockTotalActual > 5 ? 'text-success' : 'text-danger fw-bold';
+                    let textoEstado = i.stockTotalActual > 5 ? 'Óptimo' : 'Stock Bajo';
+                    
+                    return `
+                    <tr>
+                        <td class="fw-bold ps-3">${i.nombreInsumo}</td>
+                        <td class="text-muted">Abarrotes</td>
+                        <td><span class="badge bg-secondary fs-6 px-3">${i.stockTotalActual.toFixed(2)}</span></td>
+                        <td>${i.unidadMedida}</td>
+                        <td class="fw-bold text-primary">S/ ${i.precio ? parseFloat(i.precio).toFixed(2) : '0.00'}</td>
+                        <td class="${claseEstado}">${textoEstado}</td>
+                    </tr>
+                    `;
+                }).join('');
+            }
+        }
+
+        // 2. CARGAR ÓRDENES DE COCINA
+        async function cargarOrdenesAlmacen() {
+            try {
+                const res = await fetch('/api/ordenes');
+                const todasLasOrdenes = await res.json();
+                
+                ordenesPendientes = todasLasOrdenes.filter(o => o.estado === "Pendiente");
+                const contenedor = document.getElementById('contenedor-ordenes-almacen'); 
+                
+                if(!contenedor) return; 
+
+                if(ordenesPendientes.length === 0) {
+                    contenedor.innerHTML = '<div class="p-3 text-success fw-bold">No hay solicitudes de insumos desde la cocina.</div>';
+                } else {
+                    contenedor.innerHTML = ordenesPendientes.map(o => `
+                        <div class="d-flex justify-content-between align-items-center border-bottom p-3">
+                            <div>
+                                <h6 class="fw-bold m-0">Orden #${o.idOrden} - ${o.nombreProducto}</h6>
+                                <span class="badge bg-warning text-dark mt-1">${o.cantidadSolicitada} Unidades</span>
+                                <span class="badge bg-danger ms-2"><i class="bi bi-bell-fill me-1"></i>Cocina solicita insumos</span>
+                            </div>
+                            <button class="btn btn-outline-primary rounded-pill px-4" onclick="calcularYDespachar(${o.idOrden})">
+                                <i class="bi bi-box-seam me-2"></i> Calcular y Despachar
+                            </button>
+                        </div>
+                    `).join('');
+                }
+            } catch (e) { console.error("Error:", e); }
+        }
+
+        // 3. DESPACHAR A COCINA
+        async function calcularYDespachar(idOrden) {
+            const orden = ordenesPendientes.find(o => o.idOrden === idOrden);
+            const receta = recetas[orden.idProducto];
+            
+            if (!receta) { alert("Receta no encontrada."); return; }
+
+            if(confirm(`¿Confirmas el despacho de insumos para la Orden #${idOrden}?`)) {
+                
+                let interino = JSON.parse(localStorage.getItem('almacenInterino')) || [];
+
+                receta.forEach(ingrediente => {
+                    const cantidadAEnviar = ingrediente.cantBase * orden.cantidadSolicitada;
+                    const insumoReal = insumosDB.find(i => i.idInsumo === ingrediente.idInsumo);
+                    
+                    let insumoEnMesa = interino.find(i => i.id === ingrediente.idInsumo);
+                    if (insumoEnMesa) {
+                        insumoEnMesa.cantidad += cantidadAEnviar;
+                    } else {
+                        interino.push({
+                            id: ingrediente.idInsumo,
+                            nombre: insumoReal ? insumoReal.nombreInsumo : 'Insumo',
+                            cantidad: cantidadAEnviar,
+                            unidad: insumoReal ? insumoReal.unidadMedida : ''
+                        });
+                    }
+                });
+
+                localStorage.setItem('almacenInterino', JSON.stringify(interino));
+                orden.estado = "En Proceso"; 
+                
+                try {
+                    await fetch('/api/ordenes', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(orden)
+                    });
+                    alert(`✅ Insumos despachados con éxito.`);
+                    location.reload(); 
+                } catch (error) {
+                    alert("Error al actualizar la orden.");
+                }
+            }
+        }
     </script>
 </body>
 </html>

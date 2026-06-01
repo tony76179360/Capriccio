@@ -33,4 +33,9 @@ public class OrdenController {
     public List<OrdenProduccion> listarCompletadas() {
         return ordenRepository.findByEstado("Completado");
     }
+    // Método general para listar TODAS las órdenes
+    @GetMapping
+    public List<OrdenProduccion> listarTodas() {
+        return ordenRepository.findAll();
+    }
 }

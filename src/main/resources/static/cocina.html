@@ -20,13 +20,18 @@
     <div class="sidebar d-flex flex-column p-3">
         <h3 class="text-center mb-4"><span class="text-danger">C</span>apriccio</h3>
         <ul class="nav nav-pills flex-column mb-auto">
-            <li class="nav-item"><a href="index.html" class="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
+            <li class="nav-item">
+                <a href="index.html" class="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+            </li>
+            <li><a href="tienda.html" class="nav-link"><i class="bi bi-shop me-2"></i> Tienda</a></li>
             <li><a href="almacen.html" class="nav-link"><i class="bi bi-box-seam me-2"></i> Almacén </a></li>
             <li><a href="cocina.html" class="nav-link active"><i class="bi bi-egg-fried me-2"></i> Cocina</a></li>
-            <li><a href="tienda.html" class="nav-link"><i class="bi bi-shop me-2"></i> Tienda</a></li>
             <li><a href="reporte_mermas.html" class="nav-link"><i class="bi bi-bar-chart-line me-2"></i> Reporte de Mermas</a></li>
         </ul>
-        <hr><div class="dropdown"><small>Grupo 3 - Ing. Sistemas</small></div>
+        <hr>
+        <div class="dropdown">
+            <small>Grupo 3 - Ing. Sistemas</small>
+        </div>
     </div>
 
     <div class="main-content">
@@ -175,35 +180,85 @@
 
         async function cargarOrdenesCocina() {
             try {
-                const res = await fetch('/api/ordenes/en-proceso');
-                listaOrdenesBackend = await res.json();
+                // 1. Traer TODAS las órdenes del backend
+                const res = await fetch('/api/ordenes');
+                const todasLasOrdenes = await res.json();
                 
-                // Llenar las tarjetas
+                // 2. Filtrar solo las que están recién llegadas o las que Almacén ya aprobó
+                listaOrdenesBackend = todasLasOrdenes.filter(o => 
+                    o.estado === "Nueva_Cocina" || 
+                    o.estado === "En Proceso" || 
+                    o.estado === "en-proceso"
+                );
+                
                 const contenedor = document.getElementById('contenedor-ordenes');
                 if(listaOrdenesBackend.length === 0) {
-                    contenedor.innerHTML = '<div class="col-12 text-success fw-bold">No hay órdenes pendientes por preparar.</div>';
+                    contenedor.innerHTML = '<div class="col-12 text-success fw-bold">No hay órdenes pendientes para tu área.</div>';
                 } else {
-                    contenedor.innerHTML = listaOrdenesBackend.map(o => `
+                    contenedor.innerHTML = listaOrdenesBackend.map(o => {
+                        
+                        let botonHTML = '';
+                        let bordeCard = '';
+
+                        // Si recién llega de la tienda (Aún no tenemos insumos)
+                        if (o.estado === "Nueva_Cocina") {
+                            bordeCard = 'border-danger';
+                            botonHTML = `
+                            <button class="btn btn-outline-danger fw-bold w-100" onclick="solicitarInsumosAlmacen(${o.idOrden})">
+                                <i class="bi bi-cart-arrow-down me-1"></i> Pedir Insumos a Almacén
+                            </button>`;
+                        } 
+                        // Si el almacén ya nos dio los insumos (Lista para preparar)
+                        else {
+                            bordeCard = 'border-warning';
+                            botonHTML = `
+                            <button class="btn btn-outline-warning text-dark fw-bold w-100" id="btn-prep-${o.idOrden}" onclick="marcarComoPreparada(${o.idOrden})">
+                                <i class="bi bi-fire me-1"></i> Preparar
+                            </button>`;
+                        }
+
+                        return `
                         <div class="col-md-4" id="tarjeta-orden-${o.idOrden}">
-                            <div class="card card-orden h-100 shadow-sm">
+                            <div class="card card-orden h-100 shadow-sm border-2 ${bordeCard}">
                                 <div class="card-body">
                                     <h6 class="fw-bold mb-3">#${o.idOrden} - ${o.nombreProducto}</h6>
-                                    <p class="mb-4 small">Cantidad: <span class="badge bg-warning text-dark px-2 py-1 ms-1">${o.cantidadSolicitada} unidades</span></p>
-                                    <button class="btn btn-outline-warning text-dark fw-bold w-100" id="btn-prep-${o.idOrden}" onclick="marcarComoPreparada(${o.idOrden})">
-                                        <i class="bi bi-fire me-1"></i> Preparar
-                                    </button>
+                                    <p class="mb-1 small">Cantidad: <span class="badge bg-dark px-2 py-1 ms-1">${o.cantidadSolicitada} unidades</span></p>
+                                    <p class="mb-4 small text-muted">Estado: <strong>${o.estado.replace('_', ' ')}</strong></p>
+                                    ${botonHTML}
                                 </div>
                             </div>
                         </div>
-                    `).join('');
+                        `;
+                    }).join('');
                 }
 
-                // Llenar el selector del Modal de Mermas
+                // Llenar el selector del Modal de Mermas (Solo con las que ya se están preparando)
+                const ordenesEnPreparacion = listaOrdenesBackend.filter(o => o.estado !== "Nueva_Cocina");
                 const selectOrdenMerma = document.getElementById('ordenMerma');
                 selectOrdenMerma.innerHTML = '<option value="">-- No, fue merma general --</option>' + 
-                    listaOrdenesBackend.map(o => `<option value="${o.idOrden}">Orden #${o.idOrden} - ${o.nombreProducto}</option>`).join('');
+                    ordenesEnPreparacion.map(o => `<option value="${o.idOrden}">Orden #${o.idOrden} - ${o.nombreProducto}</option>`).join('');
 
             } catch (e) { console.error("Error:", e); }
+        }
+
+        // ================= NUEVA FUNCIÓN PARA ENVIAR AL ALMACÉN =================
+        async function solicitarInsumosAlmacen(idOrden) {
+            const ordenObj = listaOrdenesBackend.find(o => o.idOrden === idOrden);
+            
+            // Cambiamos el estado a "Pendiente" para que ahora sí le aparezca al Almacén
+            ordenObj.estado = "Pendiente"; 
+
+            try {
+                await fetch('/api/ordenes', {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(ordenObj)
+                });
+                alert(`✅ Insumos para la Orden #${idOrden} solicitados.\nEspera a que Almacén los despache a tu mesa de trabajo.`);
+                location.reload();
+            } catch (error) {
+                alert("Error al comunicar con el servidor.");
+            }
         }
 
         async function cargarInsumosGenerales() {

@@ -24,11 +24,11 @@ public class MermaController {
     public RegistroMerma guardarMerma(@RequestBody RegistroMerma merma) {
         Insumo insumoDb = insumoRepository.findById(merma.getInsumo().getIdInsumo()).orElseThrow();
 
-        // 1. Costo Financiero (Regla anterior)
+        // 1. Costo Financiero
         BigDecimal costoTotal = merma.getCantidadperdida().multiply(insumoDb.getCostoUnitario());
         merma.setCostofinancierocal(costoTotal);
 
-        // 2. LÓGICA DEL DIAGRAMA TO-BE
+        // 2 Logica 
         if (merma.getIdorden() != null) {
             OrdenProduccion orden = ordenRepository.findById(merma.getIdorden()).orElse(null);
             

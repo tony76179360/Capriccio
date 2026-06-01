@@ -17,7 +17,7 @@ body {
 
 /* Sector: Sidebar */
 .sidebar {
-    background-color: var(--sidebar-bg);
+    background: linear-gradient(135deg, #135290 0%, #1a252f 100%);
     min-height: 100vh;
     color: white;
     width: 250px;
@@ -213,4 +213,11 @@ body {
 
 .card-header.bg-danger {
     background-color: var(--accent-red) !important;
+}
+
+/* Ocultar flechas en campos numéricos (Chrome, Safari, Edge, Opera) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
