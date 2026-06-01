@@ -75,8 +75,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // MOTOR DE RECETAS (Simula la base de datos de fórmulas)
-        // Las cantidades base son para 1 sola torta. El sistema las multiplicará.
+        // MOTOR DE RECETAS 
         const recetas = {
             1: [ // ID 1 = Torta de Chocolate
                 { idInsumo: 1, nombre: 'Harina de Trigo', cantBase: 0.50, unidad: 'Kg' },
@@ -177,7 +176,6 @@
 
             document.getElementById('tabla-despacho').innerHTML = htmlTabla;
             
-            // Si no hay stock suficiente, bloqueamos el botón rojo
             const btn = document.getElementById('btn-confirmar');
             btn.disabled = !stockSuficiente;
             if(!stockSuficiente) {
@@ -200,11 +198,9 @@
             document.getElementById('btn-confirmar').disabled = true;
 
             try {
-                // A) Descontar cada insumo en la base de datos
                 for(let item of calculoDespacho) {
-                    const insumoActualizado = { ...item.insumoOriginal }; // Copiamos el insumo
+                    const insumoActualizado = { ...item.insumoOriginal }; 
                     insumoActualizado.stockTotalActual = insumoActualizado.stockTotalActual - item.cantidadADescontar; // Restamos
-
                     // Enviamos el UPDATE a InsumoController
                     await fetch('/api/insumos', {
                         method: 'POST',
@@ -213,15 +209,15 @@
                     });
                 }
 
-                // B) Actualizar el estado de la Orden para que desaparezca
+                // Actualizar el estado de la Orden para que desaparezca
                 ordenSeleccionada.estado = "En Proceso";
                 await fetch('/api/ordenes', {
-                    method: 'POST', // Usamos POST porque ya tiene ID, Spring hará un UPDATE
+                    method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(ordenSeleccionada)
                 });
 
-                // --- TRUCO TIC: Guardar en el Almacén Interino (Cocina) ---
+                // --- Guardar en el Almacén Interino ---
                 let interino = JSON.parse(localStorage.getItem('almacenInterino') || '[]');
                 calculoDespacho.forEach(item => {
                     let insumoCocina = interino.find(i => i.id === item.insumoOriginal.idInsumo);
@@ -237,7 +233,6 @@
                     }
                 });
                 localStorage.setItem('almacenInterino', JSON.stringify(interino));
-                // ----------------------------------------------------------
                 alert("✅ Insumos despachados a cocina. El stock ha sido descontado automáticamente.");
                 
                 // Recargar todo para ver los cambios

@@ -13,6 +13,10 @@
         .card-orden .card-header { background-color: white; border-bottom: none; }
         .cursor-pointer { cursor: pointer; transition: transform 0.2s; }
         .cursor-pointer:hover { transform: translateY(-3px); box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important; }
+        /* Degradados más intensos para las tarjetas-botón */
+        .bg-grad-blue { background: linear-gradient(135deg, #e4efff 0%, #4888e8 100%) !important; }
+        .bg-grad-green { background: linear-gradient(135deg, #e6f9ed 0%, #16994f 100%) !important; }
+        .bg-grad-red { background: linear-gradient(135deg, #ffeaea 0%, #d76055 100%) !important; }
     </style>
 </head>
 <body>
@@ -39,7 +43,7 @@
 
         <div class="row g-4 mb-5">
             <div class="col-md-4">
-                <div class="card shadow-sm border-0 border-start border-primary border-4 h-100 p-3 d-flex flex-row align-items-center justify-content-between cursor-pointer" data-bs-toggle="modal" data-bs-target="#modalPedirInsumos">
+                <div class="card shadow-sm border-0 border-start border-primary border-4 h-100 p-3 d-flex flex-row align-items-center justify-content-between cursor-pointer bg-grad-blue" data-bs-toggle="modal" data-bs-target="#modalPedirInsumos">
                     <div>
                         <h5 class="fw-bold m-0 text-primary">Pedir Insumos a Almacén</h5>
                         <small class="text-muted">Solicitar reposición por mermas</small>
@@ -47,17 +51,19 @@
                     <i class="bi bi-cart3 fs-1 text-primary"></i>
                 </div>
             </div>
+            
             <div class="col-md-4">
-                <div class="card shadow-sm border-0 border-start border-warning border-4 h-100 p-3 d-flex flex-row align-items-center justify-content-between cursor-pointer" onclick="enviarATienda()">
+                <div class="card shadow-sm border-0 border-start border-success border-4 h-100 p-3 d-flex flex-row align-items-center justify-content-between cursor-pointer bg-grad-green" onclick="enviarATienda()">
                     <div>
-                        <h5 class="fw-bold m-0 text-warning">Enviar a Tienda</h5>
+                        <h5 class="fw-bold m-0 text-success">Enviar a Tienda</h5>
                         <small class="text-muted">Registrar producción a vitrina</small>
                     </div>
-                    <i class="bi bi-box-seam fs-1 text-warning"></i>
+                    <i class="bi bi-box-seam fs-1 text-success"></i>
                 </div>
             </div>
+            
             <div class="col-md-4">
-                <div class="card shadow-sm border-0 border-start border-danger border-4 h-100 p-3 d-flex flex-row align-items-center justify-content-between cursor-pointer" data-bs-toggle="modal" data-bs-target="#modalMerma">
+                <div class="card shadow-sm border-0 border-start border-danger border-4 h-100 p-3 d-flex flex-row align-items-center justify-content-between cursor-pointer bg-grad-red" data-bs-toggle="modal" data-bs-target="#modalMerma">
                     <div>
                         <h5 class="fw-bold m-0 text-danger">Registrar Merma</h5>
                         <small class="text-muted">Reportar incidentes en preparación</small>
@@ -97,16 +103,19 @@
         <h5 class="text-danger fw-bold"><i class="bi bi-trash3 me-2"></i> Registrar Merma</h5>
         <form id="formMerma" class="mt-3">
             
-            <label class="small fw-bold mb-1">¿Ocurrió preparando una orden?</label>
-            <select class="form-select mb-3 bg-light" id="ordenMerma">
-                <option value="">-- No, fue merma general --</option>
-                </select>
+            <label class="small fw-bold mb-1">Orden en preparación afectada</label>
+            <select class="form-select mb-3 border-danger" id="ordenMerma" required>
+                <option value="" disabled selected>-- Seleccione la orden afectada --</option>
+            </select>
 
             <label class="small fw-bold mb-1">Insumo afectado</label>
             <select class="form-select mb-3" id="selectInsumoMerma" required></select>
             
             <label class="small fw-bold mb-1">Cantidad Perdida</label>
-            <input type="number" step="0.01" class="form-control mb-3" id="cantidadMerma" placeholder="Ej. 1.50" required>
+            <div class="input-group mb-3">
+                <input type="number" step="0.01" class="form-control" id="cantidadMerma" placeholder="Ej. 1.50" required>
+                <span class="input-group-text bg-light text-muted fw-bold" id="unidadMermaAddon">---</span>
+            </div>
             
             <label class="small fw-bold mb-1">Causa</label>
             <select class="form-select mb-3" id="causaMerma">
@@ -115,13 +124,18 @@
                 <option value="Vencimiento">Vencimiento</option>
             </select>
             
-            <div class="form-check form-switch mb-4">
+            <div class="form-check form-switch mb-2">
                 <input class="form-check-input" type="checkbox" id="esReutilizable">
                 <label class="form-check-label fw-bold text-dark" for="esReutilizable">¿Es reutilizable para sub-producción?</label>
             </div>
+
+            <div class="mb-4 d-none" id="cajaJustificacion">
+                <label class="small fw-bold text-warning-emphasis mb-1"><i class="bi bi-info-circle me-1"></i> Justificación de reutilización</label>
+                <textarea class="form-control border-warning" id="justificacionMerma" rows="2" placeholder="Ej: Se puede utilizar para preparar trufas o postres de vaso."></textarea>
+            </div>
             
             <input type="hidden" id="idUsuario" value="1">
-            <button type="submit" class="btn btn-danger w-100 fw-bold">Registrar, Auditar y Descontar</button>
+            <button type="submit" class="btn btn-danger w-100 fw-bold">Registrar Merma</button>
         </form>
     </div></div></div>
 
@@ -205,15 +219,15 @@
                             bordeCard = 'border-danger';
                             botonHTML = `
                             <button class="btn btn-outline-danger fw-bold w-100" onclick="solicitarInsumosAlmacen(${o.idOrden})">
-                                <i class="bi bi-cart-arrow-down me-1"></i> Pedir Insumos a Almacén
+                                <i class="bi bi-cart-arrow-down me-1"></i> Solicitar Insumos a Almacén
                             </button>`;
                         } 
-                        // Si el almacén ya nos dio los insumos (Lista para preparar)
+                        // Si el almacén ya nos dio los insumos 
                         else {
                             bordeCard = 'border-warning';
                             botonHTML = `
                             <button class="btn btn-outline-warning text-dark fw-bold w-100" id="btn-prep-${o.idOrden}" onclick="marcarComoPreparada(${o.idOrden})">
-                                <i class="bi bi-fire me-1"></i> Preparar
+                                <i class="bi bi-fire me-1"></i> Preparar Pedido
                             </button>`;
                         }
 
@@ -232,20 +246,25 @@
                     }).join('');
                 }
 
-                // Llenar el selector del Modal de Mermas (Solo con las que ya se están preparando)
+                // Llenar el selector del Modal de Mermas 
                 const ordenesEnPreparacion = listaOrdenesBackend.filter(o => o.estado !== "Nueva_Cocina");
                 const selectOrdenMerma = document.getElementById('ordenMerma');
-                selectOrdenMerma.innerHTML = '<option value="">-- No, fue merma general --</option>' + 
-                    ordenesEnPreparacion.map(o => `<option value="${o.idOrden}">Orden #${o.idOrden} - ${o.nombreProducto}</option>`).join('');
+
+                if (ordenesEnPreparacion.length === 0) {
+                    // Si no hay órdenes preparándose, bloqueamos el select
+                    selectOrdenMerma.innerHTML = '<option value="" disabled selected>-- No hay órdenes en preparación --</option>';
+                } else {
+                    // Si hay órdenes, forzamos a que elijan una
+                    selectOrdenMerma.innerHTML = '<option value="" disabled selected>-- Seleccione la orden afectada --</option>' + 
+                        ordenesEnPreparacion.map(o => `<option value="${o.idOrden}">Orden #${o.idOrden} - ${o.nombreProducto}</option>`).join('');
+                }
 
             } catch (e) { console.error("Error:", e); }
         }
 
-        // ================= NUEVA FUNCIÓN PARA ENVIAR AL ALMACÉN =================
+        // ====== NUEVA FUNCIÓN PARA ENVIAR AL ALMACÉN =========
         async function solicitarInsumosAlmacen(idOrden) {
             const ordenObj = listaOrdenesBackend.find(o => o.idOrden === idOrden);
-            
-            // Cambiamos el estado a "Pendiente" para que ahora sí le aparezca al Almacén
             ordenObj.estado = "Pendiente"; 
 
             try {
@@ -281,7 +300,32 @@
             btn.disabled = true;
         }
 
-        // ================= CICLO DE MERMAS Y REPOSICIÓN =================
+        // 1. EVENTO: Autocompletar la unidad de medida al elegir el insumo
+        document.getElementById('selectInsumoMerma').addEventListener('change', (e) => {
+            const idSeleccionado = parseInt(e.target.value);
+            const insumoReal = insumosDB.find(i => i.idInsumo === idSeleccionado);
+            
+            if(insumoReal) {
+                document.getElementById('unidadMermaAddon').innerText = insumoReal.unidadMedida;
+            }
+        });
+
+        // 2. EVENTO: Mostrar u ocultar la justificación
+        document.getElementById('esReutilizable').addEventListener('change', (e) => {
+            const caja = document.getElementById('cajaJustificacion');
+            const inputJustificacion = document.getElementById('justificacionMerma');
+
+            if(e.target.checked) {
+                caja.classList.remove('d-none');
+                inputJustificacion.required = true;
+            } else {
+                caja.classList.add('d-none');
+                inputJustificacion.required = false;
+                inputJustificacion.value = ''; 
+            }
+        });
+
+        // ===CICLO DE MERMAS Y REPOSICIÓN ===
 
         // ACCIÓN 1: Registrar Merma (Se cae la harina)
         document.getElementById('formMerma').addEventListener('submit', async (e) => {
@@ -296,7 +340,9 @@
                 tipoclasi: document.getElementById('causaMerma').value,
                 idusuario: parseInt(document.getElementById('idUsuario').value),
                 esReutilizable: document.getElementById('esReutilizable').checked,
-                idorden: idOrden ? parseInt(idOrden) : null 
+                idorden: idOrden ? parseInt(idOrden) : null,
+                // Agregamos la justificación para que viaje a Java
+                justificacionReutilizable: document.getElementById('justificacionMerma').value 
             };
 
             // 1. Enviar a Java para Auditoría
@@ -307,7 +353,7 @@
             });
 
             if (respuesta.ok) {
-                // 2. Descontar físicamente de la mesa de la cocina (Almacén Interino)
+                // 2. Descontar físicamente de la mesa de la cocina 
                 let interino = JSON.parse(localStorage.getItem('almacenInterino')) || [];
                 let insumoMesa = interino.find(i => i.id === idInsumo);
                 
@@ -360,7 +406,7 @@
 
 
         
-        // ACCIÓN 3: Enviar a Tienda (Terminación de ciclo con validación)
+        // ACCIÓN 3: Enviar a Tienda 
         async function enviarATienda() {
             if(ordenesListasParaEnviar.length === 0) {
                 alert("Selecciona al menos una orden en 'Preparar' antes de enviarla.");
@@ -389,7 +435,7 @@
                 }
             }
 
-            // 2. Comparar stock y crear lista de faltantes (Ignorando errores de decimales JS)
+            // 2. Comparar stock y crear lista de faltantes
             let faltantes = [];
             for (let idInsumo in requerimientosTotales) {
                 let req = requerimientosTotales[idInsumo];
@@ -397,8 +443,6 @@
                 let cantidadDisponible = insumoEnMesa ? insumoEnMesa.cantidad : 0;
 
                 let falta = req.cantidadRequerida - cantidadDisponible;
-                
-                // Solo si realmente falta más de 0.01 unidades/kilos, lo reportamos
                 if (falta > 0.01) {
                     faltantes.push(`- ${req.nombre}: ${falta.toFixed(2)} ${req.unidad}`);
                 }

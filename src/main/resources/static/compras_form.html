@@ -151,7 +151,6 @@
                 
                 const select = document.getElementById('selectInsumoCompra');
                 if(select) {
-                    // Llenamos el select dinámicamente con los datos de MySQL
                     select.innerHTML = '<option value="" selected disabled>Seleccione insumo...</option>' + 
                         insumosDB.map(i => `<option value="${i.idInsumo}">${i.nombreInsumo} (${i.unidadMedida})</option>`).join('');
                 }
@@ -169,7 +168,7 @@
             
             // Cálculos
             const total = cant * prec;
-            const subtotal = total / 1.18; // Calculando la base antes de impuestos
+            const subtotal = total / 1.18;
             const igv = total - subtotal;
 
             // Dibujar en pantalla
@@ -191,16 +190,16 @@
                 return;
             }
 
-            // Bloqueamos el botón para evitar dobles clics
             btn.innerHTML = 'Guardando...';
             btn.disabled = true;
 
             // Buscamos el insumo original en nuestra lista
             const insumoReal = insumosDB.find(i => i.idInsumo === idInsumo);
+            const precioComprado = parseFloat(document.getElementById('precioCompra').value);
             
-            // ¡EL PASO CLAVE! Le sumamos la nueva compra al stock que ya existía
+            // Le sumamos la nueva compra al stock que ya existía
             insumoReal.stockTotalActual += cantidadComprada;
-            insumoReal.precio = precioCompra;
+            insumoReal.costoUnitario = precioComprado;
             try {
                 // Enviamos el insumo actualizado a Java para que haga el UPDATE en la tabla
                 const respuesta = await fetch('/api/insumos', {
@@ -211,7 +210,6 @@
                 
                 if(respuesta.ok) {
                     alert(`✅ Ingreso Exitoso: Se han sumado ${cantidadComprada} ${insumoReal.unidadMedida} a ${insumoReal.nombreInsumo}.`);
-                    // Redirigimos automáticamente al almacén para que veas tu nuevo stock brillar
                     window.location.href = 'almacen.html'; 
                 }
             } catch (error) {

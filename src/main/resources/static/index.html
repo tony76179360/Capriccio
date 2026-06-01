@@ -37,6 +37,7 @@
         .activity-item.warning::before { background: #ffc107; }
         .activity-item.success::before { background: #198754; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -154,22 +155,34 @@
                     </div>
                 </div>
             </div>
+            <div class="row g-4 mt-2 mb-5">
+            <div class="col-md-6 offset-md-3">
+                <div class="card card-kpi p-4 h-100 bg-white border-0">
+                    <h5 class="fw-bold text-dark mb-4 text-center">
+                        <i class="bi bi-pie-chart-fill text-info me-2"></i> Balance Financiero
+                    </h5>
+                    <div style="height: 300px; display: flex; justify-content: center;">
+                        <canvas id="graficoFinanciero"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
 
     <script>
         async function cargarDashboardData() {
             try {
-                // 1. Solicitar datos simultáneos al Backend Java
+                // 1. Solicitar datos simultáneos al Backend Java 
                 const [resInsumos, resMermas, resOrdenes] = await Promise.all([
                     fetch('/api/insumos'),
                     fetch('/api/mermas'),
-                    fetch('/api/ordenes/pendientes')
+                    fetch('/api/ordenes')
                 ]);
 
                 const insumos = await resInsumos.json();
                 const mermas = await resMermas.json();
-                const ordenes = await resOrdenes.json();
+                const todasLasOrdenes = await resOrdenes.json();
 
                 // 2. ACTUALIZAR KPIs (Tarjetas Superiores)
                 
@@ -180,11 +193,25 @@
                 const costoMermas = mermas.reduce((total, m) => total + (m.costofinancierocal || 0), 0);
                 document.getElementById('kpi-mermas').innerText = `S/ ${costoMermas.toFixed(2)}`;
 
-                // Tortas en Proceso (Suma de cantidad solicitada en cocina)
-                const totalProceso = ordenes.reduce((total, o) => total + (o.cantidadSolicitada || 0), 0);
+                // --- LÓGICA DEL GRÁFICO (Ingresos vs Mermas) ---
+                let historialVentas = JSON.parse(localStorage.getItem('historialVentas')) || [];
+                const totalIngresos = historialVentas.reduce((total, venta) => total + venta.precio, 0);
+
+                // 2. Mandamos a dibujar la torta
+                dibujarGraficoFinanciero(totalIngresos, costoMermas);
+
+                // --- NUEVA LÓGICA PARA TORTAS EN PROCESO" ---
+                const ordenesActivasEnCocina = todasLasOrdenes.filter(o => 
+                    o.estado === "Nueva_Cocina" || 
+                    o.estado === "Pendiente" || 
+                    o.estado === "En Proceso"
+                );
+
+                // Tortas en Proceso
+                const totalProceso = ordenesActivasEnCocina.reduce((total, o) => total + (o.cantidadSolicitada || 0), 0);
                 document.getElementById('kpi-proceso').innerText = totalProceso;
 
-                // Alertas de Stock (Calcula los críticos)
+                // Alertas de Stock
                 const criticos = insumos.filter(i => parseFloat(i.stockTotalActual) <= parseFloat(i.stockMinimoAlerta));
                 document.getElementById('kpi-alertas').innerText = criticos.length;
 
@@ -207,9 +234,9 @@
                 const feed = document.getElementById('actividad-reciente');
                 let htmlFeed = '';
 
-                // Última orden detectada
-                if(ordenes.length > 0) {
-                    const ultOrden = ordenes[ordenes.length - 1]; // Toma la última
+                // Última orden detectada 
+                if(todasLasOrdenes.length > 0) {
+                    const ultOrden = todasLasOrdenes[todasLasOrdenes.length - 1]; 
                     htmlFeed += `
                         <div class="activity-item warning">
                             <p class="mb-0 fw-bold small text-dark">Tienda solicitó producción</p>
@@ -229,7 +256,6 @@
                     `;
                 }
 
-                // Si no hay datos, mostrar mensaje
                 if(htmlFeed === '') {
                     htmlFeed = `<p class="text-muted small">No hay eventos recientes en el sistema.</p>`;
                 }
@@ -239,6 +265,71 @@
             } catch (error) {
                 console.error("Error al cargar datos del Dashboard:", error);
             }
+        }
+        let chartFinanciero = null; 
+
+        function dibujarGraficoFinanciero(ingresos, mermas) {
+            const canvas = document.getElementById('graficoFinanciero');
+            const ctx = canvas.getContext('2d');
+            
+            if (chartFinanciero) {
+                chartFinanciero.destroy();
+            }
+
+            // 1. Degradado Verde para Ingresos
+            const gradienteIngresos = ctx.createLinearGradient(0, 0, 0, 300);
+            gradienteIngresos.addColorStop(0, '#2696FF'); // Color superior (Claro)
+            gradienteIngresos.addColorStop(1, '#0046F2'); // Color inferior (Oscuro)
+
+            // 2. Degradado Rojo para Mermas 
+            const gradienteMermas = ctx.createLinearGradient(0, 0, 0, 300);
+            gradienteMermas.addColorStop(0, '#FF6F5C'); // Color superior (Claro)
+            gradienteMermas.addColorStop(1, '#F01818'); // Color inferior (Oscuro)
+
+            // 3. Degradado Gris 
+            const gradienteGris = ctx.createLinearGradient(0, 0, 0, 300);
+            gradienteGris.addColorStop(0, '#f8f9fa');
+            gradienteGris.addColorStop(1, '#dee2e6');
+            // ------------------------------------------------
+
+            // Lógica para saber qué pintar
+            const hayDatos = ingresos > 0 || mermas > 0;
+            const dataValores = hayDatos ? [ingresos, mermas] : [1];
+            
+            // degradados en lugar de los colores sólidos
+            const dataColores = hayDatos ? [gradienteIngresos, gradienteMermas] : [gradienteGris]; 
+            const dataLabels = hayDatos ? ['Ingresos Totales', 'Pérdidas (Mermas)'] : ['Sin datos registrados'];
+
+            chartFinanciero = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: dataLabels,
+                    datasets: [{
+                        data: dataValores,
+                        backgroundColor: dataColores,
+                        borderWidth: 0,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if(!hayDatos) return ' S/ 0.00';
+                                    let label = context.label || '';
+                                    if (label) label += ': ';
+                                    label += 'S/ ' + context.parsed.toFixed(2);
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         // Cargar los datos automáticamente al abrir la página

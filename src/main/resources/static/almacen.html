@@ -78,7 +78,7 @@
                                 <i class="bi bi-cart-plus-fill fs-2"></i>
                             </div>
                             <h4 class="fw-bold">Nueva Compra</h4>
-                            <p class="text-muted mb-4">Registro de facturas e ingreso de insumos al inventario.</p>
+                            <p class="text-muted mb-4">Registro de ingresos de insumos al inventario.</p>
                             <a href="compras_form.html" class="btn btn-danger w-100 py-2">Registrar Compra</a>
                         </div>
                     </div>
@@ -119,14 +119,13 @@
             await cargarOrdenesAlmacen();
         };
 
-        // --- NUEVA LÓGICA DEL BUSCADOR ---
+        // --- LÓGICA DEL BUSCADOR ---
         document.getElementById('filtroInsumo').addEventListener('input', (e) => {
             const textoBusqueda = e.target.value.toLowerCase();
             // Filtramos el arreglo original buscando coincidencias en el nombre
             const insumosFiltrados = insumosDB.filter(i => 
                 i.nombreInsumo.toLowerCase().includes(textoBusqueda)
             );
-            // Mandamos a dibujar solo los que coincidieron
             renderizarTablaInsumos(insumosFiltrados);
         });
 
@@ -135,7 +134,7 @@
             try {
                 const res = await fetch('/api/insumos');
                 insumosDB = await res.json();
-                renderizarTablaInsumos(insumosDB); // Dibujamos todos al inicio
+                renderizarTablaInsumos(insumosDB);
             } catch (e) { 
                 console.error("Error al cargar insumos:", e);
                 const tbody = document.getElementById('tabla-insumos');
@@ -143,25 +142,30 @@
             }
         }
 
-        // FUNCIÓN SEPARADA PARA DIBUJAR LA TABLA (Reutilizable para el filtro)
+        // FUNCIÓN SEPARADA PARA DIBUJAR LA TABLA 
         function renderizarTablaInsumos(listaParaDibujar) {
             const tbody = document.getElementById('tabla-insumos'); 
             if(!tbody) return;
 
             if(listaParaDibujar.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">No se encontraron insumos con ese nombre.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">No se encontraron insumos.</td></tr>';
             } else {
                 tbody.innerHTML = listaParaDibujar.map(i => {
-                    let claseEstado = i.stockTotalActual > 5 ? 'text-success' : 'text-danger fw-bold';
-                    let textoEstado = i.stockTotalActual > 5 ? 'Óptimo' : 'Stock Bajo';
+                    
+
+                    const stockActual = parseFloat(i.stockTotalActual);
+                    const stockMinimo = parseFloat(i.stockMinimoAlerta);
+                    
+                    let claseEstado = stockActual > stockMinimo ? 'text-success' : 'text-danger fw-bold';
+                    let textoEstado = stockActual > stockMinimo ? 'Óptimo' : 'Stock Bajo';
                     
                     return `
                     <tr>
                         <td class="fw-bold ps-3">${i.nombreInsumo}</td>
                         <td class="text-muted">Abarrotes</td>
-                        <td><span class="badge bg-secondary fs-6 px-3">${i.stockTotalActual.toFixed(2)}</span></td>
+                        <td><span class="badge bg-secondary fs-6 px-3">${stockActual.toFixed(2)}</span></td>
                         <td>${i.unidadMedida}</td>
-                        <td class="fw-bold text-primary">S/ ${i.precio ? parseFloat(i.precio).toFixed(2) : '0.00'}</td>
+                        <td class="fw-bold text-primary">S/ ${i.costoUnitario ? parseFloat(i.costoUnitario).toFixed(2) : '0.00'}</td>
                         <td class="${claseEstado}">${textoEstado}</td>
                     </tr>
                     `;

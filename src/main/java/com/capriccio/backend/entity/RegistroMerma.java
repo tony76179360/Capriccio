@@ -47,6 +47,9 @@ private Boolean requiereauditoria = false;
 @Column(name = "fecha_registro", updatable = false)
 private LocalDateTime fecharegistro= LocalDateTime.now();
 
+@Column(name = "justificacion_reutilizable", length = 255)
+private String justificacionReutilizable;
+
 @Column(name = "es_reutilizable")
     private Boolean esReutilizable = false;
 
@@ -152,12 +155,12 @@ private LocalDateTime fecharegistro= LocalDateTime.now();
         this.estadoAuditoria = estadoAuditoria;
     }
 
+    public String getJustificacionReutilizable() {
+        return justificacionReutilizable;
+    }
 
-
-
-
-
-
-
+    public void setJustificacionReutilizable(String justificacionReutilizable) {
+        this.justificacionReutilizable = justificacionReutilizable;
+    }
 
 }

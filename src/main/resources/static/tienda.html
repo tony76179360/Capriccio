@@ -109,7 +109,6 @@
     </div>
 
     <script>
-        // Catálogo de productos para la UI (AHORA CON PRECIOS)
         const catalogo = {
             1: { nombre: 'Torta de Chocolate', emoji: '🍫', precio: 45.00 },
             2: { nombre: 'Torta de Tres Leches', emoji: '🍰', precio: 50.00 }
@@ -192,8 +191,6 @@
                     fecha: new Date().toISOString()
                 });
                 localStorage.setItem('historialVentas', JSON.stringify(historialVentas));
-
-                // Redibujamos las dos partes de la pantalla
                 renderizarVitrina(); 
                 renderizarTablaVentas();
             }
@@ -215,7 +212,7 @@
             const sumaTotal = historialVentas.reduce((total, venta) => total + venta.precio, 0);
             totalUI.innerText = `S/ ${sumaTotal.toFixed(2)}`;
 
-            // Dibujamos las filas (usamos .reverse() para que la última venta salga arriba)
+            // Dibujamos las filas
             tbody.innerHTML = [...historialVentas].reverse().map(v => {
                 const horaFomateada = new Date(v.fecha).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
                 return `
@@ -227,7 +224,7 @@
             }).join('');
         }
 
-        // 5. SOLICITAR PRODUCCIÓN A COCINA (Mantenido intacto)
+        // 5. SOLICITAR PRODUCCIÓN A COCINA
         document.getElementById('formOrden').addEventListener('submit', async (e) => {
             e.preventDefault(); 
             const btn = document.getElementById('btn-enviar-orden');
